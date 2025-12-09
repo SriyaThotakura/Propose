@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feral Governance — CDP Final Presentation</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+</head>
+<body>
+    <div class="deck">
+        <header class="deck-header">
+            <div class="deck-title">FERAL GOVERNANCE</div>
+            <div class="deck-subtitle">Permagame of Systemic Inequality · GSAPP CDP · Fall 2025</div>
+        </header>
+
+        <main id="page" class="slides">
+            <!-- HERO: COLD OPEN -->
+            <section class="slide slide-dark" id="hero">
+                <div class="slide-tag">ACT 0 · COLD OPEN</div>
+                <div class="map-frame map-frame-cold">
+                    <div class="tactical-3d-container">
+                        <!-- Three.js canvas will be injected here -->
+                    </div>
+                    <div class="map-overlay">
+                        <div class="map-label">South Bronx · Tactical Blackout View</div>
+                        <div class="map-kde-glow"></div>
+                        <div class="map-highway-label">Cross-Bronx Expressway</div>
+                    </div>
+                </div>
+                <div class="voiceover-block">
+                    <p>"This is the South Bronx. The red you're seeing is not traffic. It's not heat. It's a computational model of 70 years of accumulated socio-economic violence—what I'm calling the Feral Agent."</p>
+                </div>
+                <div class="timing-chip">00:00 – 00:20</div>
+            </section>
+
+            <!-- SECTION: TITLE / ABSTRACT -->
+            <section class="slide" id="intro">
+                <pre class="title-card">
+═══════════════════════════════════════════════════
+FERAL GOVERNANCE: A PERMAGAME OF SYSTEMIC INEQUALITY
+
+Agent-Based Modeling as Counter-Archive
+Permacomputing as Forensic Proof
+
+[Your Name] · GSAPP CDP · Fall 2025
+═══════════════════════════════════════════════════
+                </pre>
+                <div class="speaker-notes">
+                    “My name is [Name]. This is Feral Governance—a tactical simulation that uses Agent-Based Modeling and Kernel Density Estimation to make systemic inequality computationally legible, and to prove that community-led intervention can alter its trajectory.”
+                </div>
+                <div class="timing-chip">00:20 – 00:40</div>
+            </section>
+
+            <!-- SECTION: PROBLEM STATEMENT -->
+            <section class="slide" id="problem">
+                <div class="slide-layout split">
+                    <div class="panel">
+                        <div class="panel-title">Historical Scar</div>
+                        <div class="panel-body panel-image-hint">
+                            Cross-Bronx Expressway construction (1950s, Robert Moses era)
+                            <span class="panel-caption">Use archival image here in final deck</span>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-title">Computational Scar</div>
+                        <div class="panel-body">
+                            <ul>
+                                <li>Feral Agent concentrated along highway corridor</li>
+                                <li>Inherited displacement and disinvestment</li>
+                                <li>Violence that spreads, compounds, and becomes systemic</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="speaker-notes">
+                    Problem: traditional tools (GIS, census) can’t show the algorithmic logic of how infrastructural violence propagates through time and space.
+                </div>
+                <div class="timing-chip">00:40 – 01:30</div>
+            </section>
+
+            <!-- SECTION: METHODOLOGY -->
+            <section class="slide" id="methodology">
+                <div class="slide-tag">METHOD · COMPUTATIONAL FRAMEWORK</div>
+                <pre class="stack-diagram">
+┌─────────────────────────────────────────────────┐
+│  LAYER 1: BASE MAP                              │
+│  └─ Leaflet.js + NYC GIS Data                   │
+│                                                 │
+│  LAYER 2: VULNERABILITY INDEX                   │
+│  └─ OpenFEMA + NCEI Climate Data                │
+│                                                 │
+│  LAYER 3: THE FERAL AGENT (ABM + KDE)           │
+│  └─ Agent-Based Model → Kernel Density Est.     │
+│                                                 │
+│  LAYER 4: TACTICAL UI                           │
+│  └─ Intervention Mechanics + Scorecard          │
+└─────────────────────────────────────────────────┘
+                </pre>
+                <div class="speaker-notes">
+                    Four layers: 1) urban geometry, 2) vulnerability index as substrate, 3) ABM + KDE toxic cloud, 4) tactical console where users deploy interventions and generate forensic proof.
+                </div>
+                <div class="timing-chip">01:30 – 02:30</div>
+            </section>
+
+            <!-- SECTION: FERAL AGENT RULES -->
+            <section class="slide" id="feral-agent">
+                <div class="slide-layout split">
+                    <div class="panel">
+                        <div class="panel-title">Feral Agent · Spread Logic (Pseudocode)</div>
+                        <pre class="code-block">
+function propagateAgent(adjacentZone) {
+  let spreadRate = 1.0;
+
+  // Rule 1: Income-based acceleration
+  if (adjacentZone.medianIncome &lt; 40000) {
+    spreadRate *= 1.8;
+  }
+
+  // Rule 2: Infrastructure as vector
+  if (adjacentZone.hasHighwayBarrier) {
+    spreadRate *= 2.2;
+  }
+
+  // Rule 3: Service desert multiplication
+  if (adjacentZone.greenSpacePercent &lt; 5) {
+    spreadRate *= 1.5;
+  }
+
+  return spreadRate;
+}
+                        </pre>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-title">What This Encodes</div>
+                        <ul>
+                            <li>80% faster spread in census tracts &lt; \$40k median income</li>
+                            <li>120% faster across highway barriers as infrastructural vectors</li>
+                            <li>50% faster in green space deserts (&lt; 5% coverage)</li>
+                            <li>Rules derived from health, climate vulnerability, and displacement literature</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timing-chip">02:30 – 03:30</div>
+            </section>
+
+            <!-- SECTION: ACT I – RECOGNITION -->
+            <section class="slide" id="act-1">
+                <div class="slide-tag">ACT I · RECOGNITION</div>
+                <div class="map-frame">
+                    <div class="sidebar">
+                        <pre>
+═════════════════════════════════════════
+TURN 0 · THE INITIAL SCAR
+
+Feral Score: 284
+Affected Census Tracts: 12
+
+CRITICAL FINDING:
+87% of high-Feral zones overlap
+with 1930s HOLC “Hazardous” districts
+═════════════════════════════════════════
+                        </pre>
+                    </div>
+                    <div class="map-placeholder">
+                        Initial Feral Agent cloud along Cross-Bronx Expressway
+                    </div>
+                </div>
+                <div class="timing-chip">03:30 – 04:30</div>
+            </section>
+
+            <!-- SECTION: ACT II – ACCELERATION -->
+            <section class="slide" id="act-2">
+                <div class="slide-tag">ACT II · ACCELERATION</div>
+                <div class="slide-layout">
+                    <div class="panel">
+                        <div class="panel-title">Control Scenario · 10 Turns</div>
+                        <ul>
+                            <li>Spreads along highway north to Westchester, south to Lower Bronx</li>
+                            <li>Leaps quickly across low-income zones</li>
+                            <li>Slows near wealthy enclaves like Riverdale</li>
+                            <li>Growth curve: exponential, not linear</li>
+                            <li>By Turn 25: 34% of Bronx tracts at “Critical Vulnerability”</li>
+                        </ul>
+                    </div>
+                    <div class="panel">
+                        <div class="mini-graph">Line graph: Feral Score vs. Turns (Control)</div>
+                    </div>
+                </div>
+                <div class="timing-chip">04:30 – 05:45</div>
+            </section>
+
+            <!-- SECTION: ACT III – INTERVENTION -->
+            <section class="slide" id="act-3">
+                <div class="slide-tag">ACT III · INTERVENTION</div>
+                <div class="slide-layout split">
+                    <div class="panel">
+                        <div class="panel-title">Tactical Console</div>
+                        <ul>
+                            <li>Community Land Trust (CLT)</li>
+                            <li>Mutual Aid Network</li>
+                            <li>Green Infrastructure</li>
+                            <li>Policy Reform Marker</li>
+                        </ul>
+                    </div>
+                    <div class="panel">
+                        <pre>
+═════════════════════════════════════════
+CLT DEPLOYED · MOTT HAVEN
+
+3-block stabilization zone established
+Feral spread rate −40% in radius
+
+Cost: 2 intervention units
+Remaining: 8 units
+═════════════════════════════════════════
+                        </pre>
+                    </div>
+                </div>
+                <div class="speaker-notes">
+                    User becomes Agent of Repair; CLT changes local ABM rules, modeling resident ownership as computational immunity.
+                </div>
+                <div class="timing-chip">05:45 – 07:30</div>
+            </section>
+
+            <!-- SECTION: ACT IV – FORENSIC ALERT -->
+            <section class="slide" id="act-4">
+                <div class="slide-tag">ACT IV · FORENSIC ALERT</div>
+                <div class="slide-layout split">
+                    <div class="panel">
+                        <div class="panel-title">Control</div>
+                        <div class="panel-body">
+                            Continued spread · +47% Feral Score by Turn 30
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-title">Intervention</div>
+                        <div class="panel-body">
+                            Growth slowed near CLT · +23% Feral Score by Turn 30 · Declines by Turn 40
+                        </div>
+                    </div>
+                </div>
+                <pre class="scorecard">
+═══════════════════════════════════════════════════
+FERAL ALERT · COMPARATIVE ANALYSIS
+
+CONTROL TRAJECTORY:     Feral Score +47% by Turn 30
+INTERVENTION TRAJECTORY: Feral Score +23% by Turn 30
+
+ZONES STABILIZED: 8 census tracts (24% of affected area)
+SPREAD PREVENTED: 12,400 residents spared Critical threshold
+
+CRITICAL FINDING:
+Single CLT intervention created cascading resilience
+across 3.2km radius. Spread rate decreased 31%
+in adjacent zones through network effects.
+═══════════════════════════════════════════════════
+                </pre>
+                <div class="timing-chip">07:30 – 09:30</div>
+            </section>
+
+            <!-- SECTION: PERMAGAME PRINCIPLE -->
+            <section class="slide" id="permagame">
+                <div class="slide-tag">CONCEPT · PERMAGAME</div>
+                <h2 class="slide-heading">PERMAGAME</h2>
+                <pre class="loop-diagram">
+PLAY → INTERVENE → MEASURE → EXPORT
+                ↓
+              ITERATE   (Permagame loop)
+                </pre>
+                <ul>
+                    <li>Simulation never truly ends · mirrors ongoing systemic violence</li>
+                    <li>Reset &amp; iterate: build dataset of effective interventions</li>
+                    <li>Endless Mode: intentionally unwinnable to foreground structural limits</li>
+                    <li>Game as forensic instrument, not entertainment</li>
+                </ul>
+                <div class="timing-chip">09:30 – 10:30</div>
+            </section>
+
+            <!-- SECTION: CRITICAL FRAMING -->
+            <section class="slide" id="critical-framing">
+                <pre class="quote-block">
+═══════════════════════════════════════════════════════
+"The master's tools will never dismantle
+ the master's house." — Audre Lorde
+
+"Maps are never neutral. They are always
+ arguments about the world." — James Corner
+
+"Computation is not objective. It is the
+ operationalization of value systems." — Safiya Noble
+═══════════════════════════════════════════════════════
+                </pre>
+                <div class="speaker-notes">
+                    Repurposing ABM and computation as counter-evidence; maps and models as explicit arguments encoding values of community resilience and infrastructural reparations.
+                </div>
+                <div class="timing-chip">10:30 – 11:30</div>
+            </section>
+
+            <!-- SECTION: TECH STACK -->
+            <section class="slide" id="tech-stack">
+                <pre class="stack-diagram">
+┌─────────────────────────────────────────────┐
+│  FRONTEND                                   │
+│  └─ Leaflet.js (mapping)                    │
+│  └─ D3.js / Chart.js (data viz)             │
+│  └─ HTML/CSS/JS (Tactical Console)          │
+│                                             │
+│  COMPUTATION                                │
+│  └─ Custom ABM Engine (vanilla JS)          │
+│  └─ Turf.js (spatial analysis + KDE)        │
+│                                             │
+│  DATA SOURCES                               │
+│  └─ NYC Open Data (GIS)                     │
+│  └─ OpenFEMA (vulnerability)                │
+│  └─ HOLC Redlining Maps (historical)        │
+│                                             │
+│  DEPLOYMENT                                 │
+│  └─ Static site (GitHub Pages / Netlify)    │
+│  └─ Client-side computation (no server)     │
+└─────────────────────────────────────────────┘
+                </pre>
+                <div class="timing-chip">11:30 – 12:00</div>
+            </section>
+
+            <!-- SECTION: APPLICATIONS & FUTURE WORK -->
+            <section class="slide" id="applications">
+                <div class="slide-tag">APPLICATIONS &amp; FUTURE WORK</div>
+                <div class="slide-layout three">
+                    <div class="panel">
+                        <div class="panel-title">Community Workshop</div>
+                        <div class="panel-body">
+                            CLT organizers in Mott Haven model intervention impact for city council and funders.
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-title">Policy Advocacy</div>
+                        <div class="panel-body">
+                            Coalitions export Feral Scorecard into highway expansion lawsuits and zoning hearings.
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-title">Pedagogical Tool</div>
+                        <div class="panel-body">
+                            Planning students simulate how infrastructural decisions compound over decades.
+                        </div>
+                    </div>
+                </div>
+                <ul>
+                    <li>Future: more cities, real-time data, API for community-authored scenarios.</li>
+                </ul>
+                <div class="timing-chip">12:00 – 13:00</div>
+            </section>
+
+            <!-- SECTION: CONCLUSION -->
+            <section class="slide" id="conclusion">
+                <div class="slide-tag">GRANULAR · SECONDARY INTERVENTION</div>
+                <div class="map-frame map-frame-final">
+                    <div class="map-placeholder">
+                        Tactical Blackout map with multiple interventions and diverging graphs
+                    </div>
+                </div>
+                <div class="speaker-notes">
+                <div class="timing-chip">13:00 – 14:00</div>
+            </section>
+
+            <!-- SECTION: Q&A PREP -->
+            <section class="slide" id="qa">
+                <div class="slide-tag">Q&amp;A · TACTICAL CONSOLE</div>
+                <div class="panel">
+                    <div class="panel-title">Anticipated Questions</div>
+                    <ul class="qa-list">
+                        <li><strong>Validation of ABM rules?</strong> Derived from epidemiology, sociology of displacement, and NYC census correlations; bibliography available.</li>
+                        <li><strong>Why “Permacomputing”?</strong> Fully client-side, durable web standards, no fragile dependencies.</li>
+                        <li><strong>Policy usability?</strong> Exportable, timestamped methodology + data designed for hearings and community-based research.</li>
+                        <li><strong>Biggest limitation?</strong> Cannot encode full qualitative community knowledge; meant as proof-of-concept, not replacement for lived experience.</li>
+                        <li><strong>Why a game?</strong> Games distribute agency—forcing users into strategic decision-making instead of passive viewing.</li>
+                    </ul>
+                </div>
+                <div class="timing-chip">14:00 – 15:00</div>
+            </section>
+
+            <section class="slide" id="secondary-intervention-granular">
+                <div class="slide-tag">GRANULAR · SECONDARY INTERVENTION</div>
+                <div class="map-frame">
+                    <div class="map-placeholder">
+                        Granular residential zoning intervention · 3D view
+                    </div>
+                    <div class="tactical-3d-container granular-3d-container"></div>
+                </div>
+                <div class="timing-chip">15:00 – 16:00</div>
+            </section>
+
+            <section class="slide" id="isochrone-granular">
+                <div class="slide-tag">GRANULAR · 5-MIN ACCESS SPEARS</div>
+                <div class="map-frame">
+                    <div class="map-placeholder">
+                        5-minute green access isochrones rendered as 3D spears
+                    </div>
+                    <div class="tactical-3d-container isochrone-3d-container"></div>
+                </div>
+                <div class="timing-chip">16:00 – 17:00</div>
+            </section>
+
+        </main>
+
+        <footer class="deck-footer">
+            <div class="nav-hint">Feral Governance · GSAPP CDP · Built as a forensic counter-archive</div>
+        </footer>
+    </div>
+
+    <div id="city-info" class="city-info">
+        <div class="city-info-title">City segment</div>
+        <div class="city-info-meta"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

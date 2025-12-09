@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Volumetric Point Cloud Character - Three.js</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      overflow: hidden;
+      /* Streetscape-style background */
+      background:
+        url("assets/streetscape_bg.jpg")
+        center center / cover
+        no-repeat fixed #050010;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+    #overlay {
+      position: fixed;
+      left: 0;
+      top: 0;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      pointer-events: none;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <div id="overlay">Volumetric Point Cloud · Mika Pikazo Streetscape Test</div>
+
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.164.0/build/three.module.js";
+    import { GLTFLoader } from "https://unpkg.com/three@0.164.0/examples/jsm/loaders/GLTFLoader.js";
+
+    // -----------------------------------------------------
+    // Basic Three.js setup
+    // -----------------------------------------------------
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true, // let the HTML background show through
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    document.body.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+      40,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      100
+    );
+    camera.position.set(0, 1.4, 4);
+
+    const characterGroup = new THREE.Group();
+    scene.add(characterGroup);
+
+    // Slight fog to help blend particles into background
+    scene.fog = new THREE.FogExp2(0x050010, 0.18);
+
+    // -----------------------------------------------------
+    // Shaders: turbulence + neon rim light
+    // -----------------------------------------------------
+    const pointVertexShader = /* glsl */ `
+      uniform float uTime;
+      uniform float uNoiseScale;
+      uniform float uNoiseSpeed;
+      uniform float uPointSize;
+
+      uniform mat4 modelViewMatrix;
+      uniform mat4 projectionMatrix;
+      uniform mat4 modelMatrix;
+
+      attribute vec3 position;
+
+      varying vec3 vWorldPos;
+      varying float vEdgeFactor;
+
+      // 3D Simplex Noise (small, compact version)
+      vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+      vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+      vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+      vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+      float snoise(vec3 v) {
+        const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+        const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+
+        // First corner
+        vec3 i  = floor(v + dot(v, C.yyy));
+        vec3 x0 =   v - i + dot(i, C.xxx);
+
+        // Other corners
+        vec3 g = step(x0.yzx, x0.xyz);
+        vec3 l = 1.0 - g;
+        vec3 i1 = min( g.xyz, l.zxy );
+        vec3 i2 = max( g.xyz, l.zxy );
+
+        //  x0 = x0 - 0. + 0.0 * C.xxx;
+        vec3 x1 = x0 - i1 + 1.0 * C.xxx;
+        vec3 x2 = x0 - i2 + 2.0 * C.xxx;
+        vec3 x3 = x0 - 1. + 3.0 * C.xxx;
+
+        // Permutations
+        i = mod289(i);
+        vec4 p = permute( permute( permute(
+                     i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+                   + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+                   + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+
+        // Gradients: 7x7 points over a square, mapped onto an octahedron.
+        float n_ = 0.142857142857; // 1.0/7.0
+        vec4  j = p - 49.0 * floor(p * n_ * n_);  // p / 49
+
+        vec4 x_ = floor(j * n_);
+        vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,7)
+
+        vec4 x = (x_ * 2.0 + 0.5) / 7.0 - 1.0;
+        vec4 y = (y_ * 2.0 + 0.5) / 7.0 - 1.0;
+
+        vec4 h = 1.0 - abs(x) - abs(y);
+
+        vec4 b0 = vec4( x.xy, y.xy );
+        vec4 b1 = vec4( x.zw, y.zw );
+
+        vec4 s0 = floor(b0)*2.0 + 1.0;
+        vec4 s1 = floor(b1)*2.0 + 1.0;
+        vec4 sh = -step(h, vec4(0.0));
+
+        vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+        vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+
+        vec3 p0 = vec3(a0.xy,h.x);
+        vec3 p1 = vec3(a0.zw,h.y);
+        vec3 p2 = vec3(a1.xy,h.z);
+        vec3 p3 = vec3(a1.zw,h.w);
+
+        // Normalise gradients
+        vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+        p0 *= norm.x;
+        p1 *= norm.y;
+        p2 *= norm.z;
+        p3 *= norm.w;
+
+        // Mix final noise value
+        vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+        m = m * m;
+        return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1),
+                                    dot(p2,x2), dot(p3,x3)));
+      }
+
+      void main() {
+        // Local position
+        vec3 pos = position;
+
+        // Turbulence-ish offset
+        // Use the mesh-space pos as noise seed so the shape holds together.
+        float n1 = snoise(pos * uNoiseScale + vec3(0.0, uTime * uNoiseSpeed, 0.0));
+        float n2 = snoise(pos * (uNoiseScale * 0.5) + vec3(uTime * uNoiseSpeed));
+        float n = (n1 * 0.7 + n2 * 0.3);
+
+        // Direction from center
+        vec3 dir = normalize(pos + 0.0001);
+        // Push points slightly in/out along radial direction
+        float amp = 0.3; // how "dissolve-y" it feels
+        pos += dir * n * amp;
+
+        // World + clip space
+        vec4 worldPos = modelMatrix * vec4(pos, 1.0);
+        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+        gl_Position = projectionMatrix * mvPosition;
+
+        // Perspective-correct point size
+        gl_PointSize = uPointSize * (300.0 / -mvPosition.z);
+
+        vWorldPos = worldPos.xyz;
+
+        // Edge factor slightly boosts extremities so silhouette feels alive
+        float radius = length(pos);
+        vEdgeFactor = smoothstep(0.0, 1.4, radius);
+      }
+    `;
+
+    const pointFragmentShader = /* glsl */ `
+      precision highp float;
+
+      uniform vec3 uRimColor1; // Magenta
+      uniform vec3 uRimColor2; // Cyan
+      uniform vec3 uRimColor3; // Yellow
+      uniform vec3 uCameraPos;
+      uniform float uOpacity;
+
+      varying vec3 vWorldPos;
+      varying float vEdgeFactor;
+
+      void main() {
+        // Soft round sprite
+        vec2 c = gl_PointCoord - 0.5;
+        float dist = length(c);
+        float alpha = smoothstep(0.5, 0.0, dist); // fade to transparent at edges
+
+        if (alpha <= 0.001) discard;
+
+        // Fake "normal" = normalized position (works for roughly centered meshes)
+        vec3 normal = normalize(vWorldPos);
+        vec3 viewDir = normalize(uCameraPos - vWorldPos);
+
+        // Rim = mostly visible where view is tangent to surface
+        float rim = pow(1.0 - max(dot(viewDir, normal), 0.0), 3.0);
+
+        // Layered neon bands
+        float m1 = smoothstep(0.0, 0.4, rim);
+        float m2 = smoothstep(0.3, 0.8, rim);
+        float m3 = smoothstep(0.7, 1.0, rim);
+
+        vec3 neon = uRimColor1 * m1 +
+                    uRimColor2 * m2 +
+                    uRimColor3 * m3;
+
+        // Bright white inner core, neon on edges
+        vec3 baseColor = vec3(1.0);
+        vec3 color = mix(baseColor, neon, rim);
+
+        // Extra punch at silhouette
+        alpha *= (0.4 + 0.6 * vEdgeFactor);
+        alpha *= uOpacity;
+
+        gl_FragColor = vec4(color, alpha);
+      }
+    `;
+
+    // -----------------------------------------------------
+    // Point cloud material
+    // -----------------------------------------------------
+    const uniforms = {
+      uTime: { value: 0 },
+      uNoiseScale: { value: 1.5 },   // noise frequency
+      uNoiseSpeed: { value: 0.25 },  // how fast it swirls
+      uPointSize: { value: 3.0 },    // base point size
+      uRimColor1: { value: new THREE.Color(1.4, 0.0, 1.2) }, // oversaturated magenta
+      uRimColor2: { value: new THREE.Color(0.0, 1.6, 2.0) }, // cyan
+      uRimColor3: { value: new THREE.Color(2.0, 1.8, 0.0) }, // yellow
+      uCameraPos: { value: camera.position.clone() },
+      uOpacity: { value: 0.6 },
+    };
+
+    const pointsMaterial = new THREE.ShaderMaterial({
+      uniforms,
+      vertexShader: pointVertexShader,
+      fragmentShader: pointFragmentShader,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+
+    // -----------------------------------------------------
+    // Load character mesh, convert to particles
+    // -----------------------------------------------------
+    const loader = new GLTFLoader();
+    loader.load(
+      "assets/character.glb", // <-- replace with your character asset path
+      (gltf) => {
+        // Grab first mesh in the scene
+        let sourceMesh = null;
+        gltf.scene.traverse((child) => {
+          if (child.isMesh && !sourceMesh) sourceMesh = child;
+        });
+
+        if (!sourceMesh) {
+          console.error("No mesh found in GLB!");
+          return;
+        }
+
+        sourceMesh.geometry = sourceMesh.geometry.toNonIndexed();
+        sourceMesh.updateMatrixWorld(true);
+
+        const geom = sourceMesh.geometry.clone();
+        geom.applyMatrix4(sourceMesh.matrixWorld);
+
+        geom.computeBoundingBox();
+        const bbox = geom.boundingBox.clone();
+        const size = new THREE.Vector3();
+        bbox.getSize(size);
+
+        // Center geometry around origin so the fake- normal trick works
+        const center = new THREE.Vector3();
+        bbox.getCenter(center);
+        const positionAttr = geom.getAttribute("position");
+        for (let i = 0; i < positionAttr.count; i++) {
+          const x = positionAttr.getX(i) - center.x;
+          const y = positionAttr.getY(i) - center.y;
+          const z = positionAttr.getZ(i) - center.z;
+          positionAttr.setXYZ(i, x, y, z);
+        }
+
+        // Sample random vertices into a new point cloud
+        const vertexCount = positionAttr.count;
+        const pointCount = Math.min(120000, vertexCount * 3); // 'billions' are not practical, this is a good compromise
+
+        const positions = new Float32Array(pointCount * 3);
+        for (let i = 0; i < pointCount; i++) {
+          const vIdx = Math.floor(Math.random() * vertexCount);
+          positions[i * 3 + 0] = positionAttr.getX(vIdx);
+          positions[i * 3 + 1] = positionAttr.getY(vIdx);
+          positions[i * 3 + 2] = positionAttr.getZ(vIdx);
+        }
+
+        const pointsGeometry = new THREE.BufferGeometry();
+        pointsGeometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(positions, 3)
+        );
+
+        const points = new THREE.Points(pointsGeometry, pointsMaterial);
+        characterGroup.add(points);
+
+        // Add a slight tilted pose so it feels mid-action
+        characterGroup.rotation.z = THREE.MathUtils.degToRad(10);
+        characterGroup.rotation.y = THREE.MathUtils.degToRad(20);
+        characterGroup.position.y = -0.5;
+      },
+      undefined,
+      (err) => {
+        console.error("Error loading GLB:", err);
+      }
+    );
+
+    // -----------------------------------------------------
+    // Animation: swirl, slow camera orbit, "speed line" feel
+    // -----------------------------------------------------
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const t = clock.getElapsedTime();
+      uniforms.uTime.value = t;
+
+      // Slight camera orbit to keep it dynamic
+      const radius = 4.0;
+      const camSpeed = 0.3;
+      camera.position.x = Math.cos(t * camSpeed) * radius * 0.8;
+      camera.position.z = Math.sin(t * camSpeed) * radius;
+      camera.position.y = 1.6 + Math.sin(t * 0.7) * 0.1;
+      camera.lookAt(0, 1.0, 0);
+      uniforms.uCameraPos.value.copy(camera.position);
+
+      // Character "action pose" motion – twist + squash/stretch
+      characterGroup.rotation.y += 0.0015 * (Math.sin(t * 1.4) + 1.0);
+      const squash = 1.0 + Math.sin(t * 2.5) * 0.15;
+      characterGroup.scale.set(1.0 + squash * 0.1, 1.0 + squash * 0.25, 1.0);
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // -----------------------------------------------------
+    // Resize handling
+    // -----------------------------------------------------
+    window.addEventListener("resize", () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feral Governance · Layer Stack Diagram</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-card-l1: #2a2a2a;
+            --bg-card-l2: #616161;
+            --bg-card-l3: #ff1744;
+            --bg-card-l4: #76ff03;
+
+            --accent-lime: #76ff03;
+            --accent-cyan: #00e5ff;
+            --accent-pink: #ff1744;
+
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --text-muted: #9e9e9e;
+
+            --border-l1: #9e9e9e;
+            --border-l2: #bdbdbd;
+            --border-l3: #ff8a80;
+            --border-l4: #ccff90;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px 40px;
+        }
+
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.5;
+            background: repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.08),
+                    rgba(0, 0, 0, 0.08) 1px,
+                    transparent 1px,
+                    transparent 2px
+            );
+            mix-blend-mode: soft-light;
+            z-index: 1;
+        }
+
+        .wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            z-index: 2;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+        }
+
+        .title {
+            font-size: 20px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent-cyan);
+        }
+
+        .subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .chart-shell {
+            position: relative;
+            border-radius: 12px;
+            padding: 24px 24px 32px;
+            background: radial-gradient(circle at 0 0, rgba(118, 255, 3, 0.08), transparent 55%),
+                        radial-gradient(circle at 100% 0, rgba(0, 229, 255, 0.08), transparent 60%),
+                        #050505;
+            box-shadow:
+                0 32px 80px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(148, 163, 184, 0.2);
+            overflow: hidden;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .layer-card {
+            cursor: pointer;
+            transition: transform 180ms ease-out, filter 180ms ease-out;
+        }
+
+        .layer-card.hovered {
+            transform: translateX(16px);
+            filter: drop-shadow(0 0 15px rgba(118, 255, 3, 0.35));
+        }
+
+        .layer-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .layer-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        .layer-text {
+            font-size: 12px;
+        }
+
+        .layer-number {
+            font-size: 72px;
+            fill: rgba(255, 255, 255, 0.18);
+        }
+
+        .tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: rgba(10, 10, 10, 0.98);
+            border-radius: 8px;
+            border: 1px solid var(--accent-cyan);
+            padding: 10px 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            max-width: 320px;
+            z-index: 10;
+            opacity: 0;
+            transform: translate3d(0, 0, 0);
+            transition: opacity 120ms ease-out;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.35);
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 4px;
+        }
+
+        .tooltip-meta {
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .tooltip-body {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .legend {
+            margin-top: 32px;
+            padding: 16px 18px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--accent-cyan);
+            background: rgba(3, 7, 18, 0.9);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .legend-item {
+            border-radius: 8px;
+            padding: 10px 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+        }
+
+        .legend-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 4px;
+        }
+
+        .legend-text {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            padding: 2px 7px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent-lime);
+            margin-top: 4px;
+        }
+
+        .tag-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--accent-pink);
+            margin-right: 6px;
+        }
+
+        .flow-path {
+            cursor: pointer;
+            transition: stroke-width 140ms ease-out, opacity 140ms ease-out;
+        }
+
+        .flow-path.hovered {
+            stroke-width: 3;
+            opacity: 1;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="scanlines"></div>
+<div class="wrapper">
+    <div class="header">
+        <div class="title">FERAL GOVERNANCE · LAYER STACK</div>
+        <div class="subtitle">ABM · KDE · TACTICAL UI · D3.JS</div>
+    </div>
+    <div class="chart-shell">
+        <svg id="layerStackSvg"></svg>
+    </div>
+    <div class="legend" id="legend"></div>
+</div>
+
+<div class="tooltip" id="tooltip">
+    <div class="tooltip-title"></div>
+    <div class="tooltip-meta"></div>
+    <div class="tooltip-body"></div>
+</div>
+
+<script>
+    (function () {
+        const layerData = [
+            {
+                id: 'base',
+                index: 1,
+                name: 'Base Map',
+                color: getComputedStyle(document.documentElement).getPropertyValue('--bg-card-l1').trim(),
+                border: getComputedStyle(document.documentElement).getPropertyValue('--border-l1').trim()
+            },
+            {
+                id: 'vuln',
+                index: 2,
+                name: 'Vulnerability Index',
+                color: getComputedStyle(document.documentElement).getPropertyValue('--bg-card-l2').trim(),
+                border: getComputedStyle(document.documentElement).getPropertyValue('--border-l2').trim()
+            },
+            {
+                id: 'feral',
+                index: 3,
+                name: 'The Feral Agent',
+                color: getComputedStyle(document.documentElement).getPropertyValue('--bg-card-l3').trim(),
+                border: getComputedStyle(document.documentElement).getPropertyValue('--border-l3').trim()
+            },
+            {
+                id: 'ui',
+                index: 4,
+                name: 'Tactical UI',
+                color: getComputedStyle(document.documentElement).getPropertyValue('--bg-card-l4').trim(),
+                border: getComputedStyle(document.documentElement).getPropertyValue('--border-l4').trim()
+            }
+        ];
+
+        // Order: [Base, Vulnerability, Feral, UI]
+        // Matrix values are simple weights for the six documented flows
+        const matrix = [
+            //  Base   Vuln  Feral  UI
+            [   0,     1,    0,    0 ], // Base
+            [   0,     0,    1,    0 ], // Vulnerability
+            [   0,     0,    0,    1 ], // Feral
+            [   1,     1,    1,    0 ], // UI
+        ];
+
+        function renderChord() {
+            const shell = document.querySelector('.chart-shell');
+            const width = shell.clientWidth || 900;
+            const height = 520;
+
+            const svg = d3.select('#layerStackSvg')
+                .attr('width', width)
+                .attr('height', height);
+
+            svg.selectAll('*').remove();
+
+            const outerRadius = Math.min(width, height) * 0.38;
+            const innerRadius = outerRadius - 24;
+
+            const chord = d3.chord()
+                .padAngle(0.15)
+                .sortSubgroups(d3.descending)
+                (matrix);
+
+            const arc = d3.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius);
+
+            const ribbon = d3.ribbon()
+                .radius(innerRadius - 6);
+
+            const g = svg.append('g')
+                .attr('transform', `translate(${width / 2},${height / 2 + 10})`);
+
+            // Groups (outer arcs)
+            const groups = g.append('g')
+                .selectAll('g')
+                .data(chord.groups)
+                .enter()
+                .append('g');
+
+            groups.append('path')
+                .attr('d', arc)
+                .attr('fill', d => layerData[d.index].color)
+                .attr('stroke', d => layerData[d.index].border)
+                .attr('stroke-width', 1.5)
+                .attr('opacity', 0.95);
+
+            // Labels
+            groups.append('text')
+                .attr('dy', '-0.25em')
+                .attr('fill', '#e5e7eb')
+                .attr('font-size', 12)
+                .attr('letter-spacing', '0.16em')
+                .attr('text-anchor', d => (d.startAngle + d.endAngle) / 2 > Math.PI ? 'end' : 'start')
+                .attr('transform', d => {
+                    const angle = (d.startAngle + d.endAngle) / 2;
+                    const x = Math.cos(angle) * (outerRadius + 18);
+                    const y = Math.sin(angle) * (outerRadius + 18);
+                    const rotate = angle * 180 / Math.PI - 90;
+                    return `translate(${x},${y}) rotate(${rotate})`;
+                })
+                .text(d => `${layerData[d.index].index} · ${layerData[d.index].name}`);
+
+            // Ribbons (flows)
+            g.append('g')
+                .selectAll('path')
+                .data(chord)
+                .enter()
+                .append('path')
+                .attr('d', ribbon)
+                .attr('fill', d => layerData[d.source.index].color)
+                .attr('stroke', d => layerData[d.source.index].border)
+                .attr('stroke-width', 0.75)
+                .attr('opacity', 0.85);
+        }
+
+        function buildLegend() {
+            const legend = d3.select('#legend');
+            legend.selectAll('*').remove();
+
+            const items = legend.selectAll('.legend-item')
+                .data(layerData)
+                .enter()
+                .append('div')
+                .attr('class', 'legend-item')
+                .style('border-color', d => d.border);
+
+            items.append('div')
+                .attr('class', 'legend-title')
+                .style('color', d => d.id === 'ui' ? 'var(--accent-lime)' : 'var(--accent-cyan)')
+                .text(d => `Layer ${d.index} · ${d.name}`);
+
+            items.append('div')
+                .attr('class', 'legend-text')
+                .text('See chord ribbons for data flow relationships.');
+
+            const tag = items.append('div').attr('class', 'tag');
+            tag.append('div').attr('class', 'tag-dot');
+            tag.append('span').text('TACTICAL LAYER');
+        }
+
+        buildLegend();
+        renderChord();
+        window.addEventListener('resize', () => {
+            renderChord();
+        });
+    })();
+</script>
+</body>
+</html>
