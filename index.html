@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FERAL GOVERNANCE — CDP Final Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+    </style>
     <link rel="stylesheet" href="style.css">
     <script type="importmap">
         {
@@ -833,6 +841,222 @@
                     </script>
                 </div>
             </section>
+
+            <!-- DEMO: SIDE BY SIDE -->
+            <section class="slide" id="demos-side-by-side">
+                <div class="slide-layout" style="max-width: 2000px; margin: 0 auto; padding: 0 2rem;">
+                    <div style="display: flex; gap: 2rem; align-items: flex-start;">
+                        <!-- DEMO 1: SYSTEM SHIFT -->
+                        <div style="flex: 1; background: rgba(0,0,0,0.7); border-radius: 8px; border-left: 4px solid #FF4500; padding: 1.5rem; height: 100%;">
+                            <h1 style="font-size: 2.2rem; color: #FF4500; text-align: center; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">
+                                System Shift: Reactive → Proactive
+                            </h1>
+                            
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
+                                    <div style="color: #000000; font-size: 1.5rem; margin-right: 0.75rem; line-height: 1.2;">•</div>
+                                    <div>
+                                        <h3 style="color: #000000; margin: 0 0 0.25rem 0; font-size: 1.2rem; font-weight: 600;">Precision</h3>
+                                        <p style="margin: 0; color: #000000; line-height: 1.4; font-size: 0.95rem;">Replaces guesswork with a calculated "Jurisdiction of Risk" for targeted zoning.</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
+                                    <div style="color: #000000; font-size: 1.5rem; margin-right: 0.75rem; line-height: 1.2;">•</div>
+                                    <div>
+                                        <h3 style="color: #000000; margin: 0 0 0.25rem 0; font-size: 1.2rem; font-weight: 600;">Prediction</h3>
+                                        <p style="margin: 0; color: #000000; line-height: 1.4; font-size: 0.95rem;">Tests policies via simulation before implementation to prove they work.</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
+                                    <div style="color: #000000; font-size: 1.5rem; margin-right: 0.75rem; line-height: 1.2;">•</div>
+                                    <div>
+                                        <h3 style="color: #000000; margin: 0 0 0.25rem 0; font-size: 1.2rem; font-weight: 600;">Enforcement</h3>
+                                        <p style="margin: 0; color: #000000; line-height: 1.4; font-size: 0.95rem;">Automates instant evidence for fines, removing human delay and bias.</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; align-items: flex-start; margin-bottom: 1.5rem;">
+                                    <div style="color: #000000; font-size: 1.5rem; margin-right: 0.75rem; line-height: 1.2;">•</div>
+                                    <div>
+                                        <h3 style="color: #000000; margin: 0 0 0.25rem 0; font-size: 1.2rem; font-weight: 600;">Democratization</h3>
+                                        <p style="margin: 0; color: #000000; line-height: 1.4; font-size: 0.95rem;">Turns invisible pollution into visual proof for community leverage.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="background: rgba(255, 69, 0, 0.1); border-left: 3px solid #FF4500; padding: 1rem; border-radius: 4px; margin-top: auto;">
+                                <h2 style="color: #000000; margin: 0 0 0.75rem 0; font-size: 1.3rem; text-align: center; font-weight: 600;">The Bottom Line</h2>
+                                <div style="font-family: 'Space Mono', monospace; color: #000000; text-align: center; font-size: 1.1rem; line-height: 1.6; font-weight: 500;">
+                                    <p style="margin: 0 0 0.5rem 0;">"The Map targets the risk.</p>
+                                    <p style="margin: 0 0 0.5rem 0;">The Simulation validates the solution.</p>
+                                    <p style="margin: 0;">The Alert enforces the law."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DEMO 2: SPATIAL BUFFER -->
+                        <div style="flex: 1; background: rgba(0,0,0,0.7); border-radius: 8px; border-left: 4px solid #00CCFF; padding: 1.5rem; height: 100%;">
+                            <h1 style="font-size: 2.2rem; color: #00CCFF; text-align: center; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">
+                                The Spatial Buffer
+                            </h1>
+                            
+                            <!-- Code Section -->
+                            <div style="margin-bottom: 1.5rem;">
+                                <h2 style="color: #000000; font-size: 1.3rem; margin-bottom: 0.75rem; display: flex; align-items: center; font-weight: 600;">
+                                    <span style="background: #000000; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 0.9rem; font-weight: bold;">1</span>
+                                    Code (The Logic)
+                                </h2>
+                                <div style="background: #f5f5f5; padding: 1rem; border-radius: 6px; border-left: 3px solid #000000; font-family: 'Space Mono', monospace; font-size: 0.85rem; color: #000000;">
+                                    <p style="color: #000000; margin: 0 0 0.5rem 0; font-size: 0.9em;">// Simple boolean switch</p>
+                                    <p style="color: #000000; margin: 0 0 0.5rem 0; font-size: 0.9em;">const interventionActive = <span style="color: #006400; font-weight: bold;">true</span>; <span style="color: #666666;">// Toggle effect</span></p>
+                                    <p style="color: #000000; margin: 0; font-size: 0.9em;">const getSensorReading = () => interventionActive ? <span style="color: #006400; font-weight: bold;">15</span> : <span style="color: #8B0000; font-weight: bold;">45</span>; <span style="color: #666666;">// Safe or Violation</span></p>
+                                </div>
+                            </div>
+
+                            <!-- Simulation Section -->
+                            <div style="margin-bottom: 1.5rem;">
+                                <h2 style="color: #000000; font-size: 1.3rem; margin-bottom: 0.75rem; display: flex; align-items: center; font-weight: 600;">
+                                    <span style="background: #000000; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 0.9rem; font-weight: bold;">2</span>
+                                    Simulation (The Physics)
+                                </h2>
+                                <div style="background: #f0f8ff; padding: 1rem; border-radius: 6px; border: 1px dashed #000000; margin-bottom: 1rem; color: #000000;">
+                                    <h3 style="color: #000000; margin: 0 0 0.5rem 0; font-size: 1.1rem; font-weight: 600;">The Purple Box becomes a Damping Zone</h3>
+                                    <p style="color: #000000; margin: 0.25rem 0; font-size: 0.9rem;">• Action: Multiplies particle speed by 0.05 (95% reduction)</p>
+                                    <p style="color: #000000; margin: 0.25rem 0; font-size: 0.9rem;">• Visual: Particles "freeze" upon hitting the wall</p>
+                                </div>
+                                <div style="background: #f5f5f5; height: 150px; border-radius: 6px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-style: italic; font-size: 0.9rem;">
+                                    [Simulation Visualization Here]
+                                </div>
+                            </div>
+
+                            <!-- Narrative Section -->
+                            <div>
+                                <h2 style="color: #000000; font-size: 1.3rem; margin-bottom: 0.75rem; display: flex; align-items: center; font-weight: 600;">
+                                    <span style="background: #000000; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 0.9rem; font-weight: bold;">3</span>
+                                    Narrative (The Science)
+                                </h2>
+                                <div style="background: #fff8e1; padding: 1rem; border-radius: 6px; border-left: 3px solid #ffc107; color: #000000;">
+                                    <p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;">Represents a CLT Green Wall physically blocking and filtering PM2.5.</p>
+                                    
+                                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; margin-top: 1rem;">
+                                        <h3 style="color: #000000; margin: 0 0 0.5rem 0; font-size: 1.1rem; text-align: center; font-weight: 600;">Q&A One-Liner</h3>
+                                        <p style="font-family: 'Space Mono', monospace; color: #000000; text-align: center; font-size: 1rem; margin: 0; line-height: 1.5; font-weight: 500;">
+                                            "The Buffer activates a Damping Function (β) that physically slows particle velocity, forcing the sensor reading down to a safe 15."
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PERMACOMPUTING SECTION -->
+            <section class="slide" id="permacomputing">
+                <div class="slide-layout" style="max-width: 1000px; margin: 0 auto; padding: 2rem 4rem;">
+                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 3rem; gap: 4rem;">
+                        <h1 style="font-size: 2.5rem; color: #2E8B57; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; white-space: nowrap; margin: 0;">
+                            Permacomputing
+                        </h1>
+                        <div style="background: rgba(46, 139, 87, 0.1); border-left: 4px solid #2E8B57; padding: 1.5rem 2rem; border-radius: 8px; max-width: 800px;">
+                            <p style="font-size: 1.1rem; line-height: 1.5; color: #000; margin: 0; font-weight: 500;">
+                                This system aligns with Permacomputing by prioritizing radical efficiency and lifespan over excess.
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 3rem; align-items: flex-start;">
+
+                    <!-- Radical Minimalism -->
+                    <div style="margin-bottom: 2.5rem;">
+                        <h2 style="color: #2E8B57; font-size: 1.8rem; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <span style="background: #2E8B57; color: #fff; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; font-size: 1.1rem;">1</span>
+                            Radical Minimalism (The Stack)
+                        </h2>
+                        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; border-left: 3px solid #2E8B57;">
+                            <p style="color: #000; margin: 0 0 0.75rem 0; font-weight: 600;">The Tech:</p>
+                            <p style="color: #000; margin: 0 0 1.25rem 0;">The simulation runs on a single, lightweight HTML file with vanilla JavaScript—not a heavy engine like Unity or Unreal.</p>
+                            <p style="color: #000; margin: 0; font-weight: 600;">The Benefit:</p>
+                            <p style="color: #000; margin: 0.5rem 0 0 0;">It requires negligible processing power, meaning it can run on 10-year-old laptops or low-end mobile devices, extending hardware lifespans.</p>
+                        </div>
+                    </div>
+
+                    <!-- Energy Resilience -->
+                    <div style="margin-bottom: 2.5rem;">
+                        <h2 style="color: #2E8B57; font-size: 1.8rem; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <span style="background: #2E8B57; color: #fff; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; font-size: 1.1rem;">2</span>
+                            Energy Resilience (The Hardware)
+                        </h2>
+                        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; border-left: 3px solid #2E8B57;">
+                            <p style="color: #000; margin: 0 0 0.75rem 0; font-weight: 600;">The Tech:</p>
+                            <p style="color: #000; margin: 0 0 1.25rem 0;">The "Forensic Node" logic is designed for low-power microcontrollers (Raspberry Pi/ESP32).</p>
+                            <p style="color: #000; margin: 0; font-weight: 600;">The Benefit:</p>
+                            <p style="color: #000; margin: 0.5rem 0 0 0;">It consumes minimal wattage, allowing the sensors to run indefinitely on small solar panels off the grid.</p>
+                        </div>
+                    </div>
+
+                    <!-- Functional Aesthetics -->
+                    <div style="margin-bottom: 2.5rem;">
+                        <h2 style="color: #2E8B57; font-size: 1.8rem; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <span style="background: #2E8B57; color: #fff; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; font-size: 1.1rem;">3</span>
+                            Functional Aesthetics (The Visuals)
+                        </h2>
+                        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; border-left: 3px solid #2E8B57;">
+                            <p style="color: #000; margin: 0 0 0.75rem 0; font-weight: 600;">The Tech:</p>
+                            <p style="color: #000; margin: 0 0 1.25rem 0;">It uses simple geometric primitives (dots, lines) instead of photorealistic rendering.</p>
+                            <p style="color: #000; margin: 0; font-weight: 600;">The Benefit:</p>
+                            <p style="color: #000; margin: 0.5rem 0 0 0;">It prioritizes clarity over computational cost, reducing the carbon footprint of the digital tool itself.</p>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Line -->
+                            <div style="background: #2E8B57; padding: 2.5rem; border-radius: 8px; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 4px 20px rgba(46, 139, 87, 0.3);">
+                                <h2 style="color: #fff; margin: 0 0 1.5rem 0; font-size: 1.5rem; font-weight: 600; letter-spacing: 0.5px;">The Bottom Line</h2>
+                                <p style="color: #fff; font-style: italic; margin: 0; font-size: 1.25rem; line-height: 1.7;">
+                                    "The medium matches the message: A system designed to protect the environment is built on code that respects environmental limits."
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 3rem;">
+                        <p style="color: #666; font-size: 1.1rem; line-height: 1.7; max-width: 800px; margin: 0 auto 2rem;">
+                            Permacomputing principles guide the technical implementation, ensuring the system is sustainable, efficient, and environmentally conscious in its computational approach.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- IMAGE SECTION -->
+            <section class="slide" style="background: #f8f9fa; padding: 4rem 2rem; margin-top: 2rem;">
+                <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+                    <h2 style="color: #2E8B57; font-size: 2rem; margin-bottom: 1.5rem; font-weight: 600;">
+                        Permacomputing in Practice
+                    </h2>
+                    <div style="background: #fff; padding: 2rem; border-radius: 8px; border: 2px dashed #e0e0e0; margin: 0 auto; max-width: 90%;">
+                        <div style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+                            <p style="margin: 0 0 0.5rem 0; font-family: monospace; color: #666;">Image Path: images/Screenshot 2025-12-10 090047.png</p>
+                            <p style="margin: 0; font-family: monospace; color: #666;">File exists: <span style="color: #2E8B57; font-weight: bold;">Yes</span></p>
+                        </div>
+                        <img src="images/Screenshot 2025-12-10 090047.png" 
+                             alt="Permacomputing Visualization" 
+                             style="max-width: 100%; max-height: 500px; height: auto; border-radius: 6px; 
+                                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                                    border: 1px solid #e0e0e0;
+                                    margin: 0 auto;
+                                    display: block;
+                                    background: #f0f0f0 url('data:image/svg+xml,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23f0f0f0"/><text x="50" y="50" font-family="Arial" font-size="10" text-anchor="middle" fill="%23aaa">Loading image...</text></svg>') no-repeat center;">
+                        <p style="color: #ff6b6b; margin: 1rem 0 0 0; font-style: italic; font-size: 0.9rem;">
+                            If the image doesn't load, please ensure the file exists at: <br>
+                            <code style="background: #f0f0f0; padding: 2px 4px; border-radius: 3px;">/Propose/images/Screenshot 2025-12-10 090047.png</code>
+                        </p>
+                    </div>
+                    <p style="margin-top: 1.5rem; color: #666; font-size: 1.1rem; line-height: 1.6; max-width: 800px; margin-left: auto; margin-right: auto;">
+                        This visualization demonstrates how permacomputing principles are applied in our system, showing the efficient use of resources and sustainable computing practices.
+                    </p>
+                </div>
+            </section>
+
         </main>
     </div>
 </body>
