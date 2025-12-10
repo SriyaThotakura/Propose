@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ABM: Intervention Logic</title>
+    <link rel="stylesheet" href="demo2-style.css">
+</head>
+<body>
+    <header>
+        <h1>CORE MODEL: ABM SIMULATION (LAYER 3)</h1>
+        <div id="stats">AGENTS: 200 | DAMPING: <span id="damping-val">0%</span></div>
+    </header>
+
+    <div id="sim-container">
+        <canvas id="abmCanvas"></canvas>
+        <div class="controls">
+            <button onclick="resetSim()">Reset</button>
+            <button class="btn-intervention" onclick="toggleIntervention()">ACTIVATE SPATIAL BUFFER</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('abmCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Resize canvas
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - 60; // Subtract header height
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Simulation State
+        let interventionActive = false;
+        const agents = [];
+        const AGENT_COUNT = 200;
+        const BASE_SPEED = 4;
+        
+        // Intervention Zone (The CLT Spatial Buffer)
+        const zone = {
+            x: 0, y: 0, width: 0, height: 0,
+            color: 'rgba(176, 38, 255, 0.2)', // Purple tint
+            borderColor: '#B026FF'
+        };
+
+        // Initialize Agents
+        class Agent {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * BASE_SPEED;
+                this.vy = (Math.random() - 0.5) * BASE_SPEED;
+                this.size = 3;
+                this.color = '#00CCFF'; // Neon Blue
+                this.isSlowed = false;
+            }
+
+            update() {
+                let speedFactor = 1;
+
+                // CHECK: Is agent inside the Intervention Zone?
+                if (interventionActive && 
+                    this.x > zone.x && this.x < zone.x + zone.width &&
+                    this.y > zone.y && this.y < zone.y + zone.height) {
+                    
+                    // --- THE COMPUTATIONAL PROOF ---
+                    // Damping Function (beta = 0.50) -> 50% Reduction
+                    speedFactor = 0.5; 
+                    this.color = '#B026FF'; // Change to Purple
+                    this.isSlowed = true;
+                } else {
+                    this.color = '#00CCFF'; // Reset to Blue
+                    this.isSlowed = false;
+                }
+
+                // Move Agent
+                this.x += this.vx * speedFactor;
+                this.y += this.vy * speedFactor;
+
+                // Bounce off walls
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw pollution trail (Pink Pollutant)
+                if (!this.isSlowed) {
+                   ctx.fillStyle = 'rgba(255, 107, 157, 0.1)'; // Faint pink trail
+                   ctx.beginPath();
+                   ctx.arc(this.x - this.vx*2, this.y - this.vy*2, this.size * 2, 0, Math.PI*2);
+                   ctx.fill();
+                }
+            }
+        }
+
+        function initAgents() {
+            agents.length = 0;
+            for (let i = 0; i < AGENT_COUNT; i++) {
+                agents.push(new Agent());
+            }
+        }
+
+        function updateZone() {
+            // Center the intervention zone
+            zone.width = canvas.width * 0.4;
+            zone.height = canvas.height * 0.6;
+            zone.x = (canvas.width - zone.width) / 2;
+            zone.y = (canvas.height - zone.height) / 2;
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(10, 10, 16, 0.3)'; // Trail effect
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Intervention Zone if active
+            if (interventionActive) {
+                ctx.fillStyle = zone.color;
+                ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
+                ctx.strokeStyle = zone.borderColor;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(zone.x, zone.y, zone.width, zone.height);
+                
+                // Label the zone
+                ctx.fillStyle = '#B026FF';
+                ctx.font = "16px Consolas";
+                ctx.fillText("CLT SPATIAL BUFFER (Damping: 50%)", zone.x + 10, zone.y + 25);
+            }
+
+            agents.forEach(agent => {
+                agent.update();
+                agent.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Button Functions
+        function toggleIntervention() {
+            interventionActive = !interventionActive;
+            const btn = document.querySelector('.btn-intervention');
+            const dampVal = document.getElementById('damping-val');
+            
+            if (interventionActive) {
+                btn.textContent = "DEACTIVATE BUFFER";
+                btn.style.background = "var(--neon-purple)";
+                btn.style.color = "white";
+                dampVal.textContent = "50% (ACTIVE)";
+                dampVal.style.color = "var(--neon-purple)";
+            } else {
+                btn.textContent = "ACTIVATE SPATIAL BUFFER";
+                btn.style.background = "";
+                btn.style.color = "";
+                dampVal.textContent = "0%";
+                dampVal.style.color = "var(--neon-blue)";
+            }
+            updateZone();
+        }
+
+        function resetSim() {
+            initAgents();
+        }
+
+        // Start
+        initAgents();
+        animate();
+    </script>
+</body>
+</html>

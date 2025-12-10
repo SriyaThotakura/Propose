@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Demo: Computational Forensics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #050508;
+            --neon-blue: #00CCFF;
+            --neon-green: #00FF99;
+            --glowing-gold: #FFD700;
+            --monospace-font: 'Consolas', 'Courier New', monospace;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--dark-bg);
+            color: var(--neon-blue);
+            font-family: var(--monospace-font);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- TOP NAVIGATION BAR --- */
+        nav {
+            height: 60px;
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid var(--neon-blue);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .nav-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: var(--monospace-font);
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        /* --- MAIN CONTENT AREA (IFRAME) --- */
+        #viewport {
+            flex-grow: 1;
+            border: none;
+            width: 100%;
+            height: calc(100vh - 60px);
+            background: #000;
+        }
+
+        /* --- TRANSITION OVERLAY --- */
+        #transition-screen {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 60px);
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 50;
+        }
+        
+        .transition-text {
+            color: var(--neon-green);
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 var(--neon-blue), -2px 0 var(--glowing-gold); }
+            50% { text-shadow: -2px 0 var(--neon-blue), 2px 0 var(--glowing-gold); }
+            100% { text-shadow: 2px 0 var(--neon-blue), -2px 0 var(--glowing-gold); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-title">
+            <i class="fas fa-network-wired"></i> SYSTEM VIEW: <span id="view-name">MACRO SCALE (MAP)</span>
+        </div>
+        
+        <div class="nav-controls">
+            <button class="nav-btn active" onclick="loadDemo('map-demo.html', 'MACRO SCALE (MAP)', 'ZOOMING OUT...')">
+                <i class="fas fa-globe"></i> 1. MAP (MACRO)
+            </button>
+            
+            <button class="nav-btn" onclick="loadDemo('demo2-split.html', 'MICRO SCALE (SYSTEM VIEW)', 'ZOOMING IN...')">
+                <i class="fas fa-columns"></i> 2. SIMULATION & ALERT
+            </button>
+        </div>
+    </nav>
+
+    <div id="transition-screen">
+        <div class="transition-text">INITIALIZING...</div>
+    </div>
+
+    <iframe
+        id="viewport"
+        src="map-demo-3d.html"
+        sandbox="allow-scripts allow-forms allow-popups allow-same-origin"
+        referrerpolicy="no-referrer"
+    ></iframe>
+
+    <script>
+        const viewport = document.getElementById('viewport');
+        const viewNameDisplay = document.getElementById('view-name');
+        const transitionScreen = document.getElementById('transition-screen');
+        const transitionText = document.querySelector('.transition-text');
+        const buttons = document.querySelectorAll('.nav-btn');
+
+        function loadDemo(url, viewName, transitionMsg) {
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            transitionText.textContent = transitionMsg;
+            transitionScreen.style.opacity = '1';
+
+            setTimeout(() => {
+                viewport.src = url;
+                viewNameDisplay.textContent = viewName;
+                setTimeout(() => {
+                    transitionScreen.style.opacity = '0';
+                }, 800);
+            }, 500);
+        }
+    </script>
+</body>
+</html>

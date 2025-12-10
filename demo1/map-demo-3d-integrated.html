@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Integrated System: Macro to Micro</title>
+    
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="demo2-style.css">
+    
+    <style>
+        /* Overrides to blend the two styles */
+        body { margin: 0; padding: 0; overflow: hidden; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; z-index: 1; }
+        
+        /* The Dashboard Overlay (Hidden initially) */
+        #forensic-dashboard {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            width: 350px;
+            background: rgba(10, 10, 16, 0.9);
+            border: 1px solid var(--neon-blue);
+            z-index: 1000;
+            padding: 20px;
+            border-radius: 5px;
+            transform: translateX(400px); /* Slide out */
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            backdrop-filter: blur(10px);
+        }
+        
+        #forensic-dashboard.active {
+            transform: translateX(0); /* Slide in */
+        }
+
+        /* The ABM Control Panel (Hidden initially) */
+        #abm-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            z-index: 1000;
+            display: none; /* Flex when active */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div id="overlay">
+        <h1>INTEGRATED SYSTEM VIEW</h1>
+        <div id="timeline"><div class="timeline-progress"></div></div>
+        <div id="current-layer">MODE: MACRO (SATELLITE)</div>
+    </div>
+
+    <div id="forensic-dashboard">
+        <h2 style="color:var(--neon-blue); font-size:1rem; border-bottom:1px solid #333; padding-bottom:10px;">IEMRS FORENSIC LINK</h2>
+        
+        <div class="metric-box" style="width:100%; margin:10px 0;">
+            <div style="font-size:0.8rem; color:#888;">REAL-TIME PM2.5</div>
+            <div class="value-display" id="pm25-value" style="font-size:2.5rem;">22</div>
+            <div style="color: #666; font-size:0.7rem;">THRESHOLD: 35 µg/m³</div>
+        </div>
+
+        <div class="status-banner" id="status-banner" style="font-size:0.8rem; min-height:40px;">
+            STATUS: MONITORING...
+        </div>
+
+        <button class="btn-alert" onclick="runCronJob()" style="width:100%; margin-top:15px; font-size:0.8rem;">
+            <i class="fas fa-satellite-dish"></i> TRIGGER SENSOR CHECK
+        </button>
+    </div>
+
+    <div id="abm-controls" class="controls">
+        <button class="btn-intervention" onclick="toggleIntervention()">
+            <i class="fas fa-shield-alt"></i> ACTIVATE SPATIAL BUFFER
+        </button>
+    </div>
+
+    <div id="controls">
+        <button id="play-pause"><i class="fas fa-play"></i></button>
+        <button id="dive-btn" title="Dive to Micro Scale"><i class="fas fa-level-down-alt"></i></button>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic3JpeWF0aG90YWt1cmEiLCJhIjoiY21kYzhuMG1hMTVrbjJpcHpnZ3Awdjc1dCJ9.bEGwdPmOH5kVaT9RWduC5Q'; // REPLACE THIS
+
+        // --- GLOBAL STATE ---
+        let map;
+        let isMicroMode = false;
+        let interventionActive = false;
+        let agents = [];
+
+        // --- INITIALIZE MAP ---
+        map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/dark-v11',
+            center: [-73.89, 40.84], // Bronx Macro View
+            zoom: 11.5,
+            pitch: 0,
+            bearing: 0,
+            antialias: true
+        });
+
+        map.on('load', () => {
+            // 1. ADD 3D BUILDINGS (The "City")
+            map.addLayer({
+                'id': '3d-buildings',
+                'source': 'composite',
+                'source-layer': 'building',
+                'filter': ['==', 'extrude', 'true'],
+                'type': 'fill-extrusion',
+                'minzoom': 14,
+                'paint': {
+                    'fill-extrusion-color': '#222',
+                    'fill-extrusion-height': ['get', 'height'],
+                    'fill-extrusion-opacity': 0.8
+                }
+            });
+
+            // 2. ADD AGENT SOURCE (Empty for now)
+            map.addSource('agents', {
+                type: 'geojson',
+                data: { type: 'FeatureCollection', features: [] }
+            });
+
+            // 3. ADD AGENT LAYER (Blue Particles)
+            map.addLayer({
+                id: 'agent-layer',
+                type: 'circle',
+                source: 'agents',
+                paint: {
+                    'circle-radius': 4,
+                    'circle-color': ['get', 'color'],
+                    'circle-blur': 0.5,
+                    'circle-opacity': 0.8
+                }
+            });
+            
+            // 4. ADD INTERVENTION ZONE (Purple Buffer) - Initially Invisible
+            map.addSource('buffer-zone', {
+                type: 'geojson',
+                data: {
+                    type: 'Feature', geometry: {
+                        type: 'Polygon',
+                        coordinates: [[
+                            [-73.912, 40.824], [-73.908, 40.824],
+                            [-73.908, 40.826], [-73.912, 40.826],
+                            [-73.912, 40.824]
+                        ]]
+                    }
+                }
+            });
+            
+            map.addLayer({
+                id: 'buffer-fill',
+                type: 'fill',
+                source: 'buffer-zone',
+                paint: {
+                    'fill-color': '#B026FF',
+                    'fill-opacity': 0 // Hidden until activated
+                }
+            });
+        });
+
+        // --- TRANSITION: MACRO -> MICRO ---
+        document.getElementById('dive-btn').onclick = () => {
+            if (isMicroMode) return; // Already there
+            isMicroMode = true;
+
+            // 1. Fly to Street Level
+            map.flyTo({
+                center: [-73.91, 40.825], 
+                zoom: 17, 
+                pitch: 60, 
+                bearing: 45, 
+                duration: 4000
+            });
+
+            // 2. UI Updates
+            setTimeout(() => {
+                document.getElementById('forensic-dashboard').classList.add('active');
+                document.getElementById('abm-controls').style.display = 'flex';
+                document.getElementById('current-layer').textContent = "MODE: MICRO (SIMULATION + SENSOR)";
+                
+                // Start Agent Loop
+                initAgents();
+                animateAgents();
+            }, 3000);
+        };
+
+        // --- AGENT SIMULATION LOGIC ---
+        function initAgents() {
+            // Generate 100 random agents around the target street
+            const center = [-73.91, 40.825];
+            for (let i = 0; i < 100; i++) {
+                agents.push({
+                    id: i,
+                    lng: center[0] + (Math.random() - 0.5) * 0.004,
+                    lat: center[1] + (Math.random() - 0.5) * 0.002,
+                    vx: (Math.random() - 0.5) * 0.00001,
+                    vy: (Math.random() - 0.5) * 0.00001,
+                    color: '#00CCFF'
+                });
+            }
+        }
+
+        function animateAgents() {
+            if (!isMicroMode) return;
+
+            // Update positions
+            const features = agents.map(a => {
+                let speedFactor = 1;
+                
+                // Check Intervention (Simplified bounding box for demo)
+                const inZone = (a.lng > -73.912 && a.lng < -73.908 && a.lat > 40.824 && a.lat < 40.826);
+                
+                if (interventionActive && inZone) {
+                    speedFactor = 0.1; // Slow down
+                    a.color = '#B026FF'; // Purple
+                } else {
+                    a.color = '#00CCFF'; // Blue
+                }
+
+                a.lng += a.vx * speedFactor;
+                a.lat += a.vy * speedFactor;
+
+                // Bounce (Simple bounds)
+                if (a.lng < -73.915 || a.lng > -73.905) a.vx *= -1;
+                if (a.lat < 40.822 || a.lat > 40.828) a.vy *= -1;
+
+                return {
+                    type: 'Feature',
+                    properties: { color: a.color },
+                    geometry: { type: 'Point', coordinates: [a.lng, a.lat] }
+                };
+            });
+
+            // Render to Mapbox
+            map.getSource('agents').setData({ type: 'FeatureCollection', features: features });
+
+            requestAnimationFrame(animateAgents);
+        }
+
+        // --- INTERVENTION LOGIC ---
+        function toggleIntervention() {
+            interventionActive = !interventionActive;
+            const btn = document.querySelector('.btn-intervention');
+            
+            if (interventionActive) {
+                map.setPaintProperty('buffer-fill', 'fill-opacity', 0.3); // Show Zone
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> BUFFER ACTIVE (50% DAMPING)';
+                btn.style.borderColor = '#B026FF';
+                btn.style.color = '#B026FF';
+            } else {
+                map.setPaintProperty('buffer-fill', 'fill-opacity', 0); // Hide Zone
+                btn.innerHTML = '<i class="fas fa-shield-alt"></i> ACTIVATE SPATIAL BUFFER';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+            }
+        }
+
+        // --- FORENSIC ALERT LOGIC ---
+        function runCronJob() {
+            const valDisplay = document.getElementById('pm25-value');
+            const statusBanner = document.getElementById('status-banner');
+            
+            statusBanner.innerText = "CONNECTING TO SENSORS...";
+            
+            setTimeout(() => {
+                valDisplay.innerText = "45";
+                valDisplay.style.color = "var(--glowing-gold)";
+                valDisplay.style.textShadow = "0 0 10px gold";
+                
+                statusBanner.innerHTML = "<strong>⚠️ FORENSIC ALERT GENERATED</strong>";
+                statusBanner.style.background = "rgba(255, 215, 0, 0.2)";
+                statusBanner.style.border = "1px solid gold";
+                statusBanner.style.color = "gold";
+            }, 800);
+        }
+    </script>
+</body>
+</html>

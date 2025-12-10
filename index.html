@@ -3,21 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feral Governance — CDP Final Presentation</title>
+    <title>FERAL GOVERNANCE — CDP Final Presentation</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@latest/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@latest/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        // Make THREE globally available for any scripts that might depend on it
+        window.THREE = THREE;
+    </script>
 </head>
 <body>
     <div class="deck">
         <header class="deck-header">
-            <div class="deck-title">FERAL GOVERNANCE</div>
-            <div class="deck-subtitle">Permagame of Systemic Inequality · GSAPP CDP · Fall 2025</div>
+            <div class="deck-title">Environmental Governance Regulatory Enactment - Agent-Based Modeling as Counter-Archive</div>
+            <div class="deck-subtitle">Permagame of Systemic Inequality · Sriya Thotakura · GSAPP CDP · Fall 2025</div>
         </header>
 
         <main id="page" class="slides">
             <!-- HERO: COLD OPEN -->
             <section class="slide slide-dark" id="hero">
-                <div class="slide-tag">ACT 0 · COLD OPEN</div>
+                <div class="slide-tag" style="font-size: 2.5rem; font-weight: 900; color: #000000; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing: 1px; padding: 10px 20px; background: rgba(255,255,255,0.2); border-radius: 4px; display: inline-block;">FERAL AGENT</div>
                 <div class="map-frame map-frame-cold">
                     <div class="tactical-3d-container">
                         <!-- Three.js canvas will be injected here -->
@@ -29,39 +41,46 @@
                     </div>
                 </div>
                 <div class="voiceover-block">
-                    <p>"This is the South Bronx. The red you're seeing is not traffic. It's not heat. It's a computational model of 70 years of accumulated socio-economic violence—what I'm calling the Feral Agent."</p>
+                    <p>"This is the South Bronx. The red you're seeing is not traffic. It's not heat. It's a computational model of 70 years of accumulated socio-economic inequality—what I'm calling the Feral Agent."</p>
                 </div>
-                <div class="timing-chip">00:00 – 00:20</div>
             </section>
-
-            <!-- SECTION: TITLE / ABSTRACT -->
-            <section class="slide" id="intro">
-                <pre class="title-card">
-═══════════════════════════════════════════════════
-FERAL GOVERNANCE: A PERMAGAME OF SYSTEMIC INEQUALITY
-
-Agent-Based Modeling as Counter-Archive
-Permacomputing as Forensic Proof
-
-[Your Name] · GSAPP CDP · Fall 2025
-═══════════════════════════════════════════════════
-                </pre>
-                <div class="speaker-notes">
-                    “My name is [Name]. This is Feral Governance—a tactical simulation that uses Agent-Based Modeling and Kernel Density Estimation to make systemic inequality computationally legible, and to prove that community-led intervention can alter its trajectory.”
+            
+            <!-- SECTION: HISTORICAL SCAR -->
+            <section class="slide" id="historical-scar">
+                <div class="panel">
+                    <div class="panel-title">Historical Scar</div>
+                    <div class="panel-body panel-image-hint">
+                        <img src="images/Recording 2025-12-10 023902.gif" alt="Cross-Bronx Expressway construction" style="max-width: 100%; margin-bottom: 1rem; border: 1px solid #333;">
+                        <blockquote style="font-size: 1.1rem; line-height: 1.7; color: #606060; border-left: 4px solid #FF4500; padding: 1rem 0 1rem 1.5rem; margin: 1.5rem 0; font-style: normal; background: rgba(20, 20, 30, 0.4); padding: 1.5rem; border-radius: 0 8px 8px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                            "Before the highway, the neighborhoods through which Moses would build the Cross Bronx were among the most racially integrated in the country, with large populations of Jewish immigrants from Eastern Europe, Irish and Italian Immigrants, (and after WWII) Puerto Ricans, and African-Americans. After the highway tore through, property values plummeted. White residents fled (lured to the suburbs by government-backed mortgages), while black and brown residents remained (oftentimes with few other options due to red-lining and racist housing policies). As covered in the documentary, Decade of Fire, subsequent disinvestment in services from the city led The Bronx to burn in the 70s and 80s, destroying roughly 80% of housing stock and displacing another 250,000."
+                        </blockquote>
+                        <div style="font-size: 0.8rem; color: #888; margin-top: 0.5rem;">
+                            Cross-Bronx Expressway construction (1950s, Robert Moses era)
+                            <span class="panel-caption">Source: Decade of Fire documentary</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="timing-chip">00:20 – 00:40</div>
             </section>
 
             <!-- SECTION: PROBLEM STATEMENT -->
-            <section class="slide" id="problem">
-                <div class="slide-layout split">
-                    <div class="panel">
-                        <div class="panel-title">Historical Scar</div>
-                        <div class="panel-body panel-image-hint">
-                            Cross-Bronx Expressway construction (1950s, Robert Moses era)
-                            <span class="panel-caption">Use archival image here in final deck</span>
+            <section class="slide" id="problem-statement">
+                <div class="panel">
+                    <div class="panel-title" style="font-size: 1.8rem; color: #FF4500; margin-bottom: 1.5rem;">Problem</div>
+                    <div class="panel-body" style="font-size: 2rem; line-height: 1.4; color: #828282; text-align: center; max-width: 80%; margin: 0 auto; padding: 2rem 0;">
+                        <p style="margin-bottom: 2rem;">Traditional tools (GIS, census) can't show the algorithmic logic of how infrastructural violence propagates through time and space.</p>
+                        <div style="max-width: 100%; margin: 0 auto; border: 1px solid #333; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                            <video width="100%" controls style="display: block; margin: 0 auto; max-width: 100%;">
+                                <source src="images/Recording 2025-12-10 021004.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- SECTION: COMPUTATIONAL SCAR -->
+            <section class="slide" id="problem">
+                <div class="slide-layout">
                     <div class="panel">
                         <div class="panel-title">Computational Scar</div>
                         <div class="panel-body">
@@ -73,10 +92,975 @@ Permacomputing as Forensic Proof
                         </div>
                     </div>
                 </div>
-                <div class="speaker-notes">
-                    Problem: traditional tools (GIS, census) can’t show the algorithmic logic of how infrastructural violence propagates through time and space.
+            </section>
+
+            <!-- SECTION: NARRATIVE PRECEDENTS -->
+            <section class="slide" id="narrative-precedents">
+                <div class="slide-tag" style="font-size: 1.8rem; color: #FF4500; margin-bottom: 2rem; text-align: center; text-transform: uppercase; letter-spacing: 2px;">Narrative Precedents</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; padding: 0 2rem; max-width: 1400px; margin: 0 auto;">
+                    <div class="precedent-item" style="background: rgba(20, 20, 30, 0.6); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        <img src="images/dont_flush_me.png" alt="Don't Flush Me project" style="width: 100%; display: block; border-bottom: 1px solid #333;">
+                        <div style="padding: 1.5rem; font-size: 0.9rem; color: #f0f0f0;">
+                            <h3 style="color: #FF4500; margin-top: 0; margin-bottom: 0.5rem;">Don't Flush Me</h3>
+                            <p style="margin: 0; color: #b0b0b0;">Data visualization of NYC's combined sewer overflow system</p>
+                        </div>
+                    </div>
+                    
+                    <div class="precedent-item" style="background: rgba(20, 20, 30, 0.6); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        <img src="images/Feral web.png" alt="Feral Web project" style="width: 100%; display: block; border-bottom: 1px solid #333;">
+                        <div style="padding: 1.5rem; font-size: 0.9rem; color: #f0f0f0;">
+                            <h3 style="color: #FF4500; margin-top: 0; margin-bottom: 0.5rem;">Feral Web</h3>
+                            <p style="margin: 0; color: #b0b0b0;">Decentralized web infrastructure project</p>
+                        </div>
+                    </div>
+                    
+                    <div class="precedent-item" style="background: rgba(20, 20, 30, 0.6); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        <img src="images/emissary_triology.png" alt="Emissary's Trilogy" style="width: 100%; display: block; border-bottom: 1px solid #333;">
+                        <div style="padding: 1.5rem; font-size: 0.9rem; color: #f0f0f0;">
+                            <h3 style="color: #FF4500; margin-top: 0; margin-bottom: 0.5rem;">Emissary's Trilogy</h3>
+                            <p style="margin: 0; color: #b0b0b0;">Narrative exploration of infrastructure and power</p>
+                        </div>
+                    </div>
+                    
+                    <div class="precedent-item" style="background: rgba(20, 20, 30, 0.6); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        <img src="images/VanessaAgardJones.png" alt="Vanessa Agard-Jones work" style="width: 100%; display: block; border-bottom: 1px solid #333;">
+                        <div style="padding: 1.5rem; font-size: 0.9rem; color: #f0b0b0;">
+                            <h3 style="color: #FF4500; margin-top: 0; margin-bottom: 0.5rem;">Vanessa Agard-Jones</h3>
+                            <p style="margin: 0; color: #b0b0b0;">Anthropological work on toxicity and environment</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="timing-chip">00:40 – 01:30</div>
+            </section>
+
+            <!-- SECTION: FERAL ATLAS -->
+            <section class="slide" id="feral-atlas">
+                <div class="slide-tag" style="font-size: 1.8rem; color: #FF4500; margin-bottom: 2rem; text-align: center; text-transform: uppercase; letter-spacing: 2px;">Feral Atlas</div>
+                <div style="max-width: 90%; margin: 0 auto; text-align: center;">
+                    <img src="images/feral atlas.png" alt="Feral Atlas visualization" style="max-width: 100%; height: auto; border: 1px solid #333; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <div style="margin-top: 1rem; font-size: 0.9rem; color: #b0b0b0; font-style: italic; margin-bottom: 1.5rem;">
+                        Feral Atlas: A framework for analyzing human-environment interactions
+                    </div>
+                    
+                    <!-- FERAL AGENT Diagram -->
+                    <div style="margin: 3rem 0; text-align: center;">
+                        <h2 style="color: #FF4500; font-size: 2.5rem; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 4px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                            FERAL AGENT
+                        </h2>
+                        <div id="feral-agent-diagram" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px 0; position: relative;">
+                        <div style="width: 100%; padding-bottom: 60%; position: relative;">
+                            <svg id="concept-diagram" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"></svg>
+                        </div>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 2rem; text-align: left;">
+                                <div class="legend-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 69, 0, 0.3); padding: 15px; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FFB84D;">NOT A Human/Resident</h3>
+                                    <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">The agent is not an individual person, household, or demographic group. It transcends individual human experience.</p>
+                                </div>
+                                <div class="legend-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 69, 0, 0.3); padding: 15px; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FFB84D;">NOT Physical Infrastructure</h3>
+                                    <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">Not a road, building, pipe, or tangible object. It exists in computational space as an abstraction.</p>
+                                </div>
+                                <div class="legend-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 69, 0, 0.3); padding: 15px; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FFB84D;">IS A Digital Proxy</h3>
+                                    <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">A computational representation of accumulated vulnerability that can be simulated, measured, and analyzed.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <script type="module">
+                        import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.8.5/+esm';
+                        
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const container = document.getElementById('feral-agent-diagram');
+                            const width = Math.min(1000, container.clientWidth * 0.9); // Limit max width
+                            const height = Math.min(600, window.innerHeight * 0.7); // Responsive height
+                            const centerX = width / 2;
+                            const centerY = height / 2;
+
+                            // Calculate responsive node positions
+                            const nodeRadius = Math.min(50, width * 0.05);
+                            const centerRadius = nodeRadius * 1.2;
+                            const horizontalOffset = width * 0.3;
+                            const verticalOffset = height * 0.3;
+
+                            const svg = d3.select("#concept-diagram")
+                                .attr("width", width)
+                                .attr("height", height)
+                                .attr("viewBox", [0, 0, width, height])
+                                .style("background", "rgba(15, 15, 25, 0.2)")
+                                .style("border-radius", "8px");
+
+                            // Define gradient
+                            const defs = svg.append("defs");
+                            
+                            const gradient = defs.append("radialGradient")
+                                .attr("id", "center-gradient");
+                            gradient.append("stop").attr("offset", "0%").attr("stop-color", "#FF6B9D").attr("stop-opacity", 0.8);
+                            gradient.append("stop").attr("offset", "100%").attr("stop-color", "#9D4EDD").attr("stop-opacity", 0.4);
+
+                            // Data structure with responsive positioning
+                            const nodes = [
+                                // Center node
+                                { 
+                                    id: "center", 
+                                    label: "Feral Agent", 
+                                    desc: "Algorithmic Entity of Infrastructural Violence", 
+                                    x: centerX, 
+                                    y: centerY, 
+                                    r: centerRadius, 
+                                    color: "url(#center-gradient)", 
+                                    type: "center" 
+                                },
+                                
+                                // What it is NOT (left side)
+                                { 
+                                    id: "not-human", 
+                                    label: "NOT Human", 
+                                    desc: "Not a person or resident", 
+                                    x: centerX - horizontalOffset, 
+                                    y: centerY - verticalOffset * 0.5, 
+                                    r: nodeRadius, 
+                                    color: "#FF6B9D", 
+                                    type: "not" 
+                                },
+                                { 
+                                    id: "not-infra", 
+                                    label: "NOT Infrastructure", 
+                                    desc: "Not physical objects", 
+                                    x: centerX - horizontalOffset, 
+                                    y: centerY + verticalOffset * 0.5, 
+                                    r: nodeRadius, 
+                                    color: "#FF8A5B", 
+                                    type: "not" 
+                                },
+                                
+                                // Historical inputs (top)
+                                { 
+                                    id: "redlining", 
+                                    label: "Redlining Maps", 
+                                    desc: "Historical disinvestment", 
+                                    x: centerX - horizontalOffset * 0.5, 
+                                    y: centerY - verticalOffset, 
+                                    r: nodeRadius * 0.9, 
+                                    color: "#FF6B9D", 
+                                    type: "input" 
+                                },
+                                { 
+                                    id: "expressway", 
+                                    label: "Cross-Bronx Expressway", 
+                                    desc: "Infrastructure violence", 
+                                    x: centerX + horizontalOffset * 0.5, 
+                                    y: centerY - verticalOffset, 
+                                    r: nodeRadius * 0.9, 
+                                    color: "#FF8A5B", 
+                                    type: "input" 
+                                },
+                                
+                                // Outputs (bottom)
+                                { 
+                                    id: "proof", 
+                                    label: "Computational Proof", 
+                                    desc: "Violence is algorithmic", 
+                                    x: centerX, 
+                                    y: centerY + verticalOffset, 
+                                    r: nodeRadius * 1.1, 
+                                    color: "#1B9BD8", 
+                                    type: "output" 
+                                }
+                            ];
+
+                            const links = [
+                                // IS connections (curved)
+                                { 
+                                    source: "center", 
+                                    target: "not-human", 
+                                    label: "≠", 
+                                    curved: true,
+                                    curveFactor: 1.5
+                                },
+                                { 
+                                    source: "center", 
+                                    target: "not-infra", 
+                                    label: "≠", 
+                                    curved: true,
+                                    curveFactor: 1.5
+                                },
+                                
+                                // Input connections (straight)
+                                { 
+                                    source: "redlining", 
+                                    target: "center", 
+                                    label: "initializes", 
+                                    curved: false 
+                                },
+                                { 
+                                    source: "expressway", 
+                                    target: "center", 
+                                    label: "triggers", 
+                                    curved: false 
+                                },
+                                
+                                // Output connection (straight)
+                                { 
+                                    source: "center", 
+                                    target: "proof", 
+                                    label: "demonstrates", 
+                                    curved: false 
+                                }
+                            ];
+
+                            // Draw links
+                            links.forEach(link => {
+                                const source = nodes.find(n => n.id === link.source);
+                                const target = nodes.find(n => n.id === link.target);
+                                
+                                if (link.curved) {
+                                    // Draw curved path with dynamic curve factor
+                                    const dx = target.x - source.x,
+                                          dy = target.y - source.y,
+                                          dr = Math.sqrt(dx * dx + dy * dy) * (link.curveFactor || 1.2);
+                                    
+                                    const path = svg.append("path")
+                                        .attr("class", "link")
+                                        .attr("d", `M${source.x},${source.y}A${dr},${dr} 0 0,1 ${target.x},${target.y}`)
+                                        .style("stroke", "rgba(255, 255, 255, 0.3)")
+                                        .style("stroke-width", 1.5);
+
+                                    // Add label
+                                    if (link.label) {
+                                        const labelPos = {
+                                            x: (source.x + target.x) / 2 - 20,
+                                            y: (source.y + target.y) / 2 - 10
+                                        };
+                                        
+                                        svg.append("text")
+                                            .attr("class", "link-label")
+                                            .attr("x", labelPos.x)
+                                            .attr("y", labelPos.y)
+                                            .style("font-size", "12px")
+                                            .style("fill", "#94A3B8")
+                                            .text(link.label);
+                                    }
+                                } else {
+                                    // Draw straight line
+                                    const line = svg.append("line")
+                                        .attr("x1", source.x)
+                                        .attr("y1", source.y)
+                                        .attr("x2", target.x)
+                                        .attr("y2", target.y)
+                                        .style("stroke", "rgba(255, 255, 255, 0.3)")
+                                        .style("stroke-width", 1.5);
+
+                                    // Add label
+                                    if (link.label) {
+                                        const midX = (source.x + target.x) / 2;
+                                        const midY = (source.y + target.y) / 2;
+                                        
+                                        // Add background for link label
+                                        const bgPadding = 4;
+                                        const bg = svg.append("rect")
+                                            .attr("x", midX - 10)
+                                            .attr("y", midY - 15)
+                                            .attr("width", 20)
+                                            .attr("height", 20)
+                                            .attr("rx", 10)
+                                            .attr("fill", "rgba(15, 15, 25, 0.8)")
+                                            .attr("stroke", "rgba(255, 255, 255, 0.1)")
+                                            .attr("stroke-width", 0.5);
+                                        
+                                        // Add link label text
+                                        svg.append("text")
+                                            .attr("class", "link-label")
+                                            .attr("x", midX)
+                                            .attr("y", midY)
+                                            .attr("text-anchor", "middle")
+                                            .attr("dominant-baseline", "middle")
+                                            .style("font-size", "12px")
+                                            .style("fill", "#E2E8F0")
+                                            .style("pointer-events", "none")
+                                            .text(link.label);
+                                    }
+                                }
+                            });
+
+                            // Draw nodes
+                            nodes.forEach(node => {
+                                // Draw node shape based on type
+                                if (node.type === "center") {
+                                    // Center node with gradient
+                                    svg.append("circle")
+                                        .attr("cx", node.x)
+                                        .attr("cy", node.y)
+                                        .attr("r", node.r)
+                                        .attr("fill", node.color)
+                                        .attr("class", "center-node")
+                                        .style("filter", "url(#glow)");
+                                } else {
+                                    // Other nodes
+                                    svg.append("circle")
+                                        .attr("cx", node.x)
+                                        .attr("cy", node.y)
+                                        .attr("r", node.r)
+                                        .attr("fill", node.color)
+                                        .attr("opacity", 0.2)
+                                        .attr("stroke", node.color)
+                                        .attr("stroke-width", 2);
+                                }
+
+                                // Calculate text width for better positioning
+                                const textWidth = Math.max(
+                                    node.label.length * 8, // Approximate width based on character count
+                                    node.desc.length * 5
+                                );
+                                
+                                // Add node label with adjusted positioning based on node type
+                                const labelY = node.y - node.r - (node.type === 'center' ? 15 : 10);
+                                
+                                // Add background for better readability
+                                const labelBg = svg.append("rect")
+                                    .attr("x", node.x - textWidth/2 - 5)
+                                    .attr("y", labelY - 15)
+                                    .attr("width", textWidth + 10)
+                                    .attr("height", 20)
+                                    .attr("rx", 4)
+                                    .attr("fill", "rgba(15, 15, 25, 0.8)")
+                                    .attr("stroke", "rgba(255, 255, 255, 0.1)")
+                                    .attr("stroke-width", 0.5);
+                                
+                                svg.append("text")
+                                    .attr("x", node.x)
+                                    .attr("y", labelY)
+                                    .attr("text-anchor", "middle")
+                                    .style("font-family", "'Space Mono', monospace")
+                                    .style("font-size", node.type === 'center' ? "16px" : "12px")
+                                    .style("font-weight", "700")
+                                    .style("fill", "#E2E8F0")
+                                    .style("pointer-events", "none")
+                                    .text(node.label);
+
+                                // Add node description with adjusted positioning
+                                const descY = node.y + node.r + (node.type === 'center' ? 35 : 25);
+                                const maxWidth = node.r * 3.5; // Maximum width for text before wrapping
+                                
+                                // Add background for description
+                                const descBg = svg.append("rect")
+                                    .attr("x", node.x - maxWidth/2 - 5)
+                                    .attr("y", descY - 15)
+                                    .attr("width", maxWidth + 10)
+                                    .attr("height", 40) // Will be adjusted after text is added
+                                    .attr("rx", 4)
+                                    .attr("fill", "rgba(15, 15, 25, 0.8)")
+                                    .attr("stroke", "rgba(255, 255, 255, 0.1)")
+                                    .attr("stroke-width", 0.5);
+                                
+                                // Function to wrap text
+                                const wrapText = (text, x, y, maxWidth, lineHeight) => {
+                                    const words = text.split(' ');
+                                    let line = '';
+                                    let lineCount = 0;
+                                    const tspan = svg.append("text")
+                                        .attr("x", x)
+                                        .attr("y", y)
+                                        .attr("text-anchor", "middle")
+                                        .style("font-family", "'Inter', sans-serif")
+                                        .style("font-size", "11px")
+                                        .style("fill", "#94A3B8")
+                                        .style("pointer-events", "none");
+                                    
+                                    for (let i = 0; i < words.length; i++) {
+                                        const testLine = line + words[i] + ' ';
+                                        const testWidth = testLine.length * 6; // Approximate width
+                                        if (testWidth > maxWidth && i > 0) {
+                                            tspan.append("tspan")
+                                                .attr("x", x)
+                                                .attr("dy", lineCount === 0 ? "0" : lineHeight)
+                                                .text(line.trim());
+                                            line = words[i] + ' ';
+                                            lineCount++;
+                                        } else {
+                                            line = testLine;
+                                        }
+                                    }
+                                    tspan.append("tspan")
+                                        .attr("x", x)
+                                        .attr("dy", lineCount === 0 ? "0" : lineHeight)
+                                        .text(line.trim());
+                                    
+                                    // Update background height based on number of lines
+                                    const finalHeight = (lineCount + 1) * (parseInt("11px") * 1.2);
+                                    descBg.attr("height", finalHeight + 10);
+                                    
+                                    return tspan;
+                                };
+                                
+                                // Add wrapped description text
+                                wrapText(node.desc, node.x, descY, maxWidth, 16);
+                            });
+
+                            // Add glow filter for center node
+                            const filter = defs.append("filter")
+                                .attr("id", "glow");
+                            filter.append("feGaussianBlur")
+                                .attr("stdDeviation", "5")
+                                .attr("result", "coloredBlur");
+                            const feMerge = filter.append("feMerge");
+                            feMerge.append("feMergeNode").attr("in", "coloredBlur");
+                            feMerge.append("feMergeNode").attr("in", "SourceGraphic");
+                        });
+                    </script>
+                </div>
+                
+                <!-- Technical Flow Section -->
+                <div style="margin: 5rem 0; text-align: center;">
+                    <h2 style="color: #FF4500; font-size: 2.5rem; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 4px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                        TECHNICAL FLOW
+                    </h2>
+                    <div id="feral-agent-flow" style="width: 100%; max-width: 1400px; margin: 0 auto; padding: 20px 0; position: relative;">
+                        <div style="width: 100%; padding-bottom: 70%; position: relative; background: #989899; border-radius: 10px; overflow: hidden; border: 1px solid #939393;">
+                            <iframe src="technical visualisatio concepts/feral_agent_chord.html" 
+                                    style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; border: none;"
+                                    sandbox="allow-scripts allow-forms allow-popups allow-same-origin">
+                            </iframe>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 2rem; text-align: left;">
+                            <div class="legend-item" style="background: rgba(128, 128, 128, 0.1); border: 1px solid rgba(94, 94, 94, 0.3); padding: 15px; border-radius: 6px;">
+                                <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #1B9BD8;">Input/Logic Layers</h3>
+                                <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">Core framework components and logic processing units.</p>
+                            </div>
+                            <div class="legend-item" style="background: rgba(157, 78, 221, 0.1); border: 1px solid rgba(157, 78, 221, 0.3); padding: 15px; border-radius: 6px;">
+                                <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #9D4EDD;">Data Sources</h3>
+                                <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">Historical and real-time data inputs feeding the system.</p>
+                            </div>
+                            <div class="legend-item" style="background: rgba(255, 184, 77, 0.1); border: 1px solid rgba(255, 184, 77, 0.3); padding: 15px; border-radius: 6px;">
+                                <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FFB84D;">Core Algorithms</h3>
+                                <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">Computational engines driving the analysis.</p>
+                            </div>
+                            <div class="legend-item" style="background: rgba(255, 107, 157, 0.1); border: 1px solid rgba(255, 107, 157, 0.3); padding: 15px; border-radius: 6px;">
+                                <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FF6B9D;">Processing Functions</h3>
+                                <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">Specialized functions for data transformation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Precedents Section -->
+                <div style="margin: 5rem 0; text-align: center;">
+                    <h2 style="color: #FF4500; font-size: 2.5rem; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 4px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                        TECHNICAL PRECEDENTS
+                    </h2>
+                    
+                    <!-- ABM Visualization Section -->
+                    <div style="margin-bottom: 4rem">
+                        <h3 style="color: #FF8A5B; font-size: 1.8rem; margin: 3rem 0 1.5rem; font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 2px;">
+                            AGENT-BASED MODELING VISUALIZATIONS
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 2rem; margin: 2rem 0;">
+                            <div style="background: #1A1A2E; border: 1px solid #2A2A3A; border-radius: 8px; overflow: hidden; padding: 1.5rem; display: flex; flex-direction: column;">
+                                <div style="flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background: #0A0E27; border-radius: 4px; padding: 1rem;">
+                                    <img src="images/mathprediction-ezgif.com-video-to-gif-converter.gif" 
+                                         alt="ABM Prediction Model" 
+                                         style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;">
+                                </div>
+                                <h4 style="font-family: 'Space Mono', monospace; font-size: 1.1rem; margin: 1rem 0 0.5rem; color: #1B9BD8;">Mathematical Prediction Model</h4>
+                                <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5;">Demonstrates the predictive capabilities of the ABM system, showing how agents evolve over time based on mathematical rules.</p>
+                            </div>
+                            
+                            <div style="background: #1A1A2E; border: 1px solid #2A2A3A; border-radius: 8px; overflow: hidden; padding: 1.5rem; display: flex; flex-direction: column;">
+                                <div style="flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background: #0A0E27; border-radius: 4px; padding: 1rem;">
+                                    <img src="images/Recording 2025-12-10 021111.gif" 
+                                         alt="ABM Simulation Recording" 
+                                         style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;">
+                                </div>
+                                <h4 style="font-family: 'Space Mono', monospace; font-size: 1.1rem; margin: 1rem 0 0.5rem; color: #9D4EDD;">Interactive Simulation</h4>
+                                <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5;">Shows real-time agent interactions and emergent patterns in the simulation environment.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Technical Precedents Image -->
+                    <div style="margin: 4rem 0; text-align: center;">
+                        <div style="max-width: 1000px; margin: 0 auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                            <img src="images/TECH_PRECEDENTS.png" 
+                                 alt="Technical Precedents" 
+                                 style="width: 100%; height: auto; display: block;">
+                        </div>
+                    </div>
+
+                    <!-- Ternary Logic Section -->
+                    <div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 2rem; margin: 3rem 0 1.5rem; flex-wrap: wrap;">
+                            <img src="images/image%2041.png" 
+                                 alt="Ternary Logic Visualization" 
+                                 style="max-width: 1250px; height: auto; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                            <img src="images/TECH_PRECEDENT2.png" 
+                                 alt="Technical Precedent 2" 
+                                 style="max-width: 1200px; height: auto; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                        </div>
+                        <div style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px 0; position: relative;">
+                            <div style="width: 100%; padding-bottom: 60%; position: relative; background: #1A1A2E; border-radius: 10px; overflow: hidden; border: 1px solid #2A2A3A;">
+                                <iframe src="agent_behavior_ternary.html" 
+                                        style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; border: none;"
+                                        sandbox="allow-scripts allow-forms allow-popups allow-same-origin">
+                                </iframe>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 2rem; text-align: left;">
+                                <div class="precedent-item" style="background: rgba(27, 155, 216, 0.1); border: 1px solid rgba(27, 155, 216, 0.3); padding: 15px; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #1B9BD8;">Ternary Logic System</h3>
+                                    <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">Implements a three-state logic system for agent decision making, allowing for more nuanced behavior representation.</p>
+                                </div>
+                                <div class="precedent-item" style="background: rgba(157, 78, 221, 0.1); border: 1px solid rgba(157, 78, 221, 0.3); padding: 15px; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #9D4EDD;">State Transitions</h3>
+                                    <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">Visual representation of how agents transition between different behavioral states based on environmental factors.</p>
+                                </div>
+                                <div class="precedent-item" style="background: rgba(255, 184, 77, 0.1); border: 1px solid rgba(255, 184, 77, 0.3); padding: 15px; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FFB84D;">Decision Matrix</h3>
+                                    <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.5; margin: 0;">Shows the decision-making framework that guides agent behavior in different scenarios.</p>
+                                </div>
+                            </div>
+                    </div>
+                    <!-- Demo 1 Interface -->
+                    <div id="demo1-interface" style="margin: 5rem 0; font-family: 'Space Mono', monospace; color: #00CCFF;">
+                        <div style="max-width: 1600px; margin: 0 auto; background: #050508; border: 1px solid #00CCFF; border-radius: 8px; overflow: hidden;">
+                            <!-- Navigation Bar -->
+                            <nav style="height: 60px; background: rgba(0, 0, 0, 0.9); border-bottom: 1px solid #00CCFF; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #fff; text-shadow: 0 0 5px #00CCFF;">
+                                    <i class="fas fa-network-wired"></i> SYSTEM VIEW: <span id="view-name">MACRO SCALE (MAP)</span>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="demo-nav-btn active" data-view="map" style="background: #00CCFF; color: #050508; border: 1px solid #00CCFF; padding: 8px 16px; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s;">
+                                        <i class="fas fa-globe"></i> 1. MAP (MACRO)
+                                    </button>
+                                    <button class="demo-nav-btn" data-view="simulation" style="background: transparent; color: #00CCFF; border: 1px solid #00CCFF; padding: 8px 16px; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s;">
+                                        <i class="fas fa-columns"></i> 2. SIMULATION & ALERT
+                                    </button>
+                                </div>
+                            </nav>
+                            
+                            <!-- Transition Screen -->
+                            <div id="transition-screen" style="position: absolute; width: 100%; height: 600px; background: #000; display: none; align-items: center; justify-content: center; z-index: 50; pointer-events: none;">
+                                <div class="transition-text" style="color: #00FF99; font-size: 2rem; text-transform: uppercase; letter-spacing: 5px; animation: glitch 0.3s infinite;">
+                                    INITIALIZING...
+                                </div>
+                            </div>
+                            
+                            <!-- Viewport for 3D Map -->
+                            <div style="width: 100%; height: 600px; background: #000; position: relative;" id="demo-container">
+                                <iframe id="map-viewport" src="demo1/map-demo.html" style="width: 100%; height: 100%; border: none;" sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>
+                                <div id="demo-status" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.9); color: #00FF99; font-size: 1.2rem; text-align: center; padding: 20px; font-family: 'Space Mono', monospace;">
+                                    <div style="margin-bottom: 20px; font-size: 2rem; text-transform: uppercase; letter-spacing: 2px;">LOADING DEMO...</div>
+                                    <div id="debug-info" style="color: #FF6B6B; font-size: 0.9rem; margin-top: 10px; max-width: 80%; word-break: break-word;">Please wait while we load the interactive map...</div>
+                                    <button onclick="retryLoad()" style="margin-top: 20px; background: #00CCFF; border: none; color: #050508; padding: 10px 20px; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 1rem; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-sync-alt"></i> RETRY LOADING
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Viewport for Simulation (hidden by default) -->
+                            <div id="simulation-viewport" style="display: none; width: 100%; height: 600px; background: #000; position: relative;">
+                                <iframe src="demo1/abm-poc.html" style="width: 100%; height: 100%; border: none;" sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>
+                            </div>
+                            
+                            <style>
+                                @keyframes glitch {
+                                    0% { text-shadow: 2px 0 #00CCFF, -2px 0 #FFD700; }
+                                    50% { text-shadow: -2px 0 #00CCFF, 2px 0 #FFD700; }
+                                    100% { text-shadow: 2px 0 #00CCFF, -2px 0 #FFD700; }
+                                }
+                                .demo-nav-btn:hover, .demo-nav-btn.active {
+                                    background: #00CCFF !important;
+                                    color: #050508 !important;
+                                    box-shadow: 0 0 15px #00CCFF;
+                                }
+                            </style>
+                            
+                            <script>
+                                // Navigation between views
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const navButtons = document.querySelectorAll('.demo-nav-btn');
+                                    
+                                    navButtons.forEach(btn => {
+                                        btn.addEventListener('click', function() {
+                                            // Update active button
+                                            navButtons.forEach(b => {
+                                                b.classList.remove('active');
+                                                b.style.background = 'transparent';
+                                                b.style.color = '#00CCFF';
+                                            });
+                                            
+                                            this.classList.add('active');
+                                            this.style.background = '#00CCFF';
+                                            this.style.color = '#050508';
+                                            
+                                            // Show transition
+                                            const transitionScreen = document.getElementById('transition-screen');
+                                            const demoContainer = document.getElementById('demo-container');
+                                            const simulationViewport = document.getElementById('simulation-viewport');
+                                            
+                                            transitionScreen.style.display = 'flex';
+                                            
+                                            // Get the view name from data attribute
+                                            const view = this.getAttribute('data-view');
+                                            const viewName = this.textContent.trim().split(' ').slice(1).join(' ');
+                                            document.getElementById('view-name').textContent = viewName;
+                                            
+                                            // Show the appropriate view after a short delay
+                                            setTimeout(() => {
+                                                if (view === 'map') {
+                                                    demoContainer.style.display = 'block';
+                                                    simulationViewport.style.display = 'none';
+                                                } else {
+                                                    demoContainer.style.display = 'none';
+                                                    simulationViewport.style.display = 'block';
+                                                    // Force reload of simulation view
+                                                    simulationViewport.querySelector('iframe').src = 'demo1/abm-poc.html';
+                                                }
+                                                
+                                                // Hide transition
+                                                setTimeout(() => {
+                                                    transitionScreen.style.display = 'none';
+                                                }, 500);
+                                            }, 500);
+                                        });
+                                    });
+                                    
+                                    // Initial setup
+                                    const mapViewport = document.getElementById('map-viewport');
+                                    const demoStatus = document.getElementById('demo-status');
+                                    const debugInfo = document.getElementById('debug-info');
+                                    
+                                    // Hide loader when iframe loads
+                                    function hideLoader() {
+                                        if (demoStatus) demoStatus.style.display = 'none';
+                                    }
+                                    
+                                    function showError(message) {
+                                        if (debugInfo) {
+                                            debugInfo.textContent = message;
+                                            debugInfo.style.color = '#FF6B6B';
+                                        }
+                                    }
+                                    
+                                    window.retryLoad = function() {
+                                        if (mapViewport) {
+                                            demoStatus.style.display = 'flex';
+                                            debugInfo.textContent = 'Reloading demo...';
+                                            mapViewport.src = mapViewport.src.split('?')[0] + '?retry=' + new Date().getTime();
+                                        }
+                                    };
+                                    
+                                    // Initial load check
+                                    if (mapViewport) {
+                                        mapViewport.onload = function() {
+                                            hideLoader();
+                                        };
+                                        
+                                        // Set a timeout to check if the iframe loaded correctly
+                                        setTimeout(() => {
+                                            try {
+                                                if (mapViewport.contentDocument && 
+                                                    mapViewport.contentDocument.readyState === 'complete') {
+                                                    hideLoader();
+                                                } else {
+                                                    showError('Demo is taking longer than expected to load...');
+                                                }
+                                            } catch (e) {
+                                                // Cross-origin error, which is expected
+                                                hideLoader();
+                                            }
+                                        }, 3000);
+                                    }
+                                });
+                            </script>
+                            <script>
+                                function hideLoader() {
+                                    const status = document.getElementById('demo-status');
+                                    if (status) status.style.display = 'none';
+                                }
+                                
+                                function showError(message) {
+                                    const debugInfo = document.getElementById('debug-info');
+                                    if (debugInfo) {
+                                        debugInfo.textContent = message;
+                                        debugInfo.style.color = '#FF6B6B';
+                                    }
+                                }
+                                
+                                function retryLoad() {
+                                    const iframe = document.getElementById('demo-iframe');
+                                    const status = document.getElementById('demo-status');
+                                    if (iframe && status) {
+                                        status.style.display = 'flex';
+                                        iframe.src = iframe.src.split('?')[0] + '?retry=' + new Date().getTime();
+                                    }
+                                }
+                                
+                                // Check for errors after a delay
+                                setTimeout(() => {
+                                    const iframe = document.getElementById('demo-iframe');
+                                    if (iframe) {
+                                        try {
+                                            // Try to access the iframe content to check for errors
+                                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                            if (iframeDoc.readyState === 'complete') {
+                                                hideLoader();
+                                            } else {
+                                                iframe.onload = hideLoader;
+                                            }
+                                        } catch (e) {
+                                            showError('Error loading demo: ' + e.message);
+                                        }
+                                    }
+                                }, 3000);
+                            </script>
+                        </div>
+                    </div>
+                </div>
+                            });
+
+                            // Add glow filter for center node
+                            const filter = defs.append("filter")
+                                .attr("id", "glow");
+                            filter.append("feGaussianBlur")
+                                .attr("stdDeviation", "5")
+                                .attr("result", "coloredBlur");
+                            const feMerge = filter.append("feMerge");
+                            feMerge.append("feMergeNode").attr("in", "coloredBlur");
+                            feMerge.append("feMergeNode").attr("in", "SourceGraphic");
+                        });
+                    </script>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
+                                    
+                                    // What it is NOT (left side)
+                                    { id: "not-human", label: "NOT Human", desc: "Not a person or resident", x: centerX - 300, y: centerY - 150, r: 50, color: "#FF6B9D", type: "not" },
+                                    { id: "not-infra", label: "NOT Infrastructure", desc: "Not physical objects", x: centerX - 300, y: centerY + 150, r: 50, color: "#FF8A5B", type: "not" },
+                                    
+                                    // Historical inputs (top)
+                                    { id: "redlining", label: "Redlining Maps", desc: "Historical disinvestment", x: centerX - 150, y: centerY - 300, r: 45, color: "#FF6B9D", type: "input" },
+                                    { id: "expressway", label: "Cross-Bronx Expressway", desc: "Infrastructure violence", x: centerX + 150, y: centerY - 300, r: 45, color: "#FF8A5B", type: "input" },
+                                    
+                                    // Outputs (bottom)
+                                    { id: "proof", label: "Computational Proof", desc: "Violence is algorithmic", x: centerX, y: centerY + 300, r: 55, color: "#1B9BD8", type: "output" }
+                                ];
+
+                                const links = [
+                                    // IS connections
+                                    { source: "center", target: "proxy", label: "instantiates as", curved: true },
+                                    { source: "center", target: "vulnerability", label: "embodies", curved: true },
+                                    { source: "center", target: "algorithm", label: "executes", curved: true },
+                                    
+                                    // NOT connections
+                                    { source: "center", target: "not-human", label: "≠", curved: true },
+                                    { source: "center", target: "not-infra", label: "≠", curved: true },
+                                    
+                                    // Input connections
+                                    { source: "redlining", target: "center", label: "initializes", curved: false },
+                                    { source: "expressway", target: "center", label: "triggers", curved: false },
+                                    
+                                    // Output connections
+                                    { source: "center", target: "proof", label: "demonstrates", curved: false },
+                                    
+                                    // Cross connections
+                                    { source: "vulnerability", target: "proof", label: "", curved: true },
+                                    { source: "algorithm", target: "proof", label: "", curved: true }
+                                ];
+
+                                // Draw links
+                                const linkGroup = svg.append("g");
+
+                                links.forEach(link => {
+                                    const source = nodes.find(n => n.id === link.source);
+                                    const target = nodes.find(n => n.id === link.target);
+                                    
+                                    if (link.curved) {
+                                        const dx = target.x - source.x;
+                                        const dy = target.y - source.y;
+                                        const dr = Math.sqrt(dx * dx + dy * dy) * 1.2;
+                                        const sweep = link.source === "center" ? 1 : 0; // Change sweep flag based on direction
+                                        
+                                        const line = linkGroup.append("line")
+                                            .attr("class", `link link-${link.source}-${link.target}`)
+                                            .attr("x1", source.x)
+                                            .attr("y1", source.y)
+                                            .attr("x2", target.x)
+                                            .attr("y2", target.y)
+                                            .style("stroke", "rgba(255,255,255,0.4)")
+                                            .style("stroke-width", 1.8)
+                                            .style("stroke-dasharray", link.source === "center" ? "none" : "5,3");
+                                            
+                                        if (link.label) {
+                                            const midX = (source.x + target.x) / 2 + (source.y - target.y) * 0.1;
+                                            const midY = (source.y + target.y) / 2 + (target.x - source.x) * 0.1;
+                                            
+                                            linkGroup.append("text")
+                                                .attr("class", "link-label")
+                                                .attr("x", midX)
+                                                .attr("y", midY)
+                                                .attr("text-anchor", "middle")
+                                                .attr("fill", "#FFB84D")
+                                                .text(link.label);
+                                        }
+                                    } else {
+                                        const line = linkGroup.append("line")
+                                            .attr("x1", source.x)
+                                            .attr("y1", source.y)
+                                            .attr("x2", target.x)
+                                            .attr("y2", target.y)
+                                            .attr("class", `link ${link.source}-${link.target}`)
+                                            .style("stroke", "rgba(255, 184, 77, 0.6)")
+                                            .style("stroke-width", 2)
+                                            .style("stroke-dasharray", "3,2");
+                                            
+                                        if (link.label) {
+                                            const midX = (source.x + target.x) / 2;
+                                            const midY = (source.y + target.y) / 2;
+                                            
+                                            linkGroup.append("text")
+                                                .attr("class", "link-label")
+                                                .attr("x", midX)
+                                                .attr("y", midY - 5)
+                                                .attr("text-anchor", "middle")
+                                                .attr("fill", "#FFB84D")
+                                                .text(link.label);
+                                        }
+                                    }
+                                });
+
+                                // Draw nodes
+                                const nodeGroup = svg.append("g");
+
+                                nodes.forEach(node => {
+                                    const group = nodeGroup.append("g")
+                                        .attr("class", `node ${node.type}`)
+                                        .attr("transform", `translate(${node.x},${node.y})`);
+
+                                    // Add circle
+                                    group.append("circle")
+                                        .attr("r", node.r)
+                                        .attr("fill", node.color)
+                                        .attr("class", node.type === "center" ? "center-node" : "")
+                                        .style("filter", node.type === "center" ? "url(#glow)" : "none");
+
+                                    // Add label
+                                    group.append("text")
+                                        .attr("class", "node-label")
+                                        .attr("text-anchor", "middle")
+                                        .attr("y", -node.r - 5)
+                                        .attr("fill", "#FFFFFF")
+                                        .style("font-size", node.type === "center" ? "16px" : "12px")
+                                        .style("font-weight", "bold")
+                                        .text(node.label);
+
+                                    // Add description
+                                    group.append("text")
+                                        .attr("class", "node-desc")
+                                        .attr("text-anchor", "middle")
+                                        .attr("y", node.r + 20)
+                                        .style("font-size", "10px")
+                                        .style("max-width", node.r * 1.5 + "px")
+                                        .call(wrap, node.r * 2);
+
+                                    // Add description text
+                                    const descText = group.append("text")
+                                        .attr("class", "node-desc")
+                                        .attr("text-anchor", "middle")
+                                        .attr("y", node.r + 20)
+                                        .style("font-size", "10px")
+                                        .style("fill", "#94A3B8")
+                                        .text(node.desc);
+
+                                    // Center the description text
+                                    const textWidth = descText.node().getComputedTextLength();
+                                    descText.attr("x", -textWidth / 2);
+                                });
+
+                                // Text wrapping function
+                                function wrap(text, width) {
+                                    text.each(function() {
+                                        const text = d3.select(this);
+                                        const words = text.text().split(/\s+/).reverse();
+                                        let word;
+                                        let line = [];
+                                        let lineNumber = 0;
+                                        const lineHeight = 1.1;
+                                        const y = text.attr("y");
+                                        const dy = parseFloat(text.attr("dy"));
+                                        let tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+                                        
+                                        while (word = words.pop()) {
+                                            line.push(word);
+                                            tspan.text(line.join(" "));
+                                            if (tspan.node().getComputedTextLength() > width) {
+                                                line.pop();
+                                                tspan.text(line.join(" "));
+                                                line = [word];
+                                                tspan = text.append("tspan")
+                                                    .attr("x", 0)
+                                                    .attr("y", y)
+                                                    .attr("dy", ++lineNumber * lineHeight + dy + "em")
+                                                    .text(word);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        </script>
+                        <style>
+                            .link {
+                                fill: none;
+                                stroke-width: 1.5;
+                                opacity: 0.6;
+                            }
+                            .node-label {
+                                font-family: 'Space Mono', monospace;
+                                font-size: 14px;
+                                font-weight: 700;
+                                pointer-events: none;
+                            }
+                            .node-desc {
+                                font-family: 'Inter', sans-serif;
+                                font-size: 11px;
+                                pointer-events: none;
+                                fill: #94A3B8;
+                            }
+                            .center-node {
+                                filter: drop-shadow(0 0 15px currentColor);
+                            }
+                        </style>
+                        
+                        <div style="background: rgba(20, 20, 30, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 2rem; margin: 2rem 0;">
+                            <div class="legend" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                                <div class="legend-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FFB84D;">NOT A Human/Resident</h3>
+                                    <p style="font-size: 0.9rem; color: #b0b0b0; line-height: 1.5; margin: 0;">The agent is not an individual person, household, or demographic group. It transcends individual human experience.</p>
+                                </div>
+                                <div class="legend-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FFB84D;">NOT Physical Infrastructure</h3>
+                                    <p style="font-size: 0.9rem; color: #b0b0b0; line-height: 1.5; margin: 0;">Not a road, building, pipe, or tangible object. It exists in computational space as an abstraction.</p>
+                                </div>
+                                <div class="legend-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FFB84D;">IS A Digital Proxy</h3>
+                                    <p style="font-size: 0.9rem; color: #b0b0b0; line-height: 1.5; margin: 0;">A computational representation of accumulated vulnerability that can be simulated, measured, and analyzed.</p>
+                                </div>
+                                <div class="legend-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 6px;">
+                                    <h3 style="font-family: 'Space Mono', monospace; font-size: 1rem; margin-bottom: 0.5rem; color: #FFB84D;">IS Algorithmic Proof</h3>
+                                    <p style="font-size: 0.9rem; color: #b0b0b0; line-height: 1.5; margin: 0;">Its behavior demonstrates that structural violence propagates through calculable, systematic patterns—not random chance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; font-size: 0.95rem; line-height: 1.7; color: #d0d0d0;">
+                            <p>The Feral Agent exists at the intersection of computational modeling and environmental justice, providing a framework to understand how systemic inequalities become embedded in urban landscapes through infrastructure.</p>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- SECTION: METHODOLOGY -->
@@ -97,10 +1081,6 @@ Permacomputing as Forensic Proof
 │  └─ Intervention Mechanics + Scorecard          │
 └─────────────────────────────────────────────────┘
                 </pre>
-                <div class="speaker-notes">
-                    Four layers: 1) urban geometry, 2) vulnerability index as substrate, 3) ABM + KDE toxic cloud, 4) tactical console where users deploy interventions and generate forensic proof.
-                </div>
-                <div class="timing-chip">01:30 – 02:30</div>
             </section>
 
             <!-- SECTION: FERAL AGENT RULES -->
@@ -353,16 +1333,6 @@ PLAY → INTERVENE → MEASURE → EXPORT
             </section>
 
             <!-- SECTION: CONCLUSION -->
-            <section class="slide" id="conclusion">
-                <div class="slide-tag">GRANULAR · SECONDARY INTERVENTION</div>
-                <div class="map-frame map-frame-final">
-                    <div class="map-placeholder">
-                        Tactical Blackout map with multiple interventions and diverging graphs
-                    </div>
-                </div>
-                <div class="speaker-notes">
-                <div class="timing-chip">13:00 – 14:00</div>
-            </section>
 
             <!-- SECTION: Q&A PREP -->
             <section class="slide" id="qa">
@@ -380,27 +1350,6 @@ PLAY → INTERVENE → MEASURE → EXPORT
                 <div class="timing-chip">14:00 – 15:00</div>
             </section>
 
-            <section class="slide" id="secondary-intervention-granular">
-                <div class="slide-tag">GRANULAR · SECONDARY INTERVENTION</div>
-                <div class="map-frame">
-                    <div class="map-placeholder">
-                        Granular residential zoning intervention · 3D view
-                    </div>
-                    <div class="tactical-3d-container granular-3d-container"></div>
-                </div>
-                <div class="timing-chip">15:00 – 16:00</div>
-            </section>
-
-            <section class="slide" id="isochrone-granular">
-                <div class="slide-tag">GRANULAR · 5-MIN ACCESS SPEARS</div>
-                <div class="map-frame">
-                    <div class="map-placeholder">
-                        5-minute green access isochrones rendered as 3D spears
-                    </div>
-                    <div class="tactical-3d-container isochrone-3d-container"></div>
-                </div>
-                <div class="timing-chip">16:00 – 17:00</div>
-            </section>
 
         </main>
 

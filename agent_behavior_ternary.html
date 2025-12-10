@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Agent's Behavior - Ternary Logic</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1a1a;
+            color: #E2E8F0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            color: #94A3B8;
+            margin-bottom: 3rem;
+        }
+
+        #logic-diagram {
+            background: #0A0E27;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 2rem;
+        }
+
+        .rules-table {
+            background: #0A0E27;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(157, 78, 221, 0.2);
+            padding: 16px;
+            text-align: left;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            color: #9D4EDD;
+            border-bottom: 2px solid rgba(157, 78, 221, 0.4);
+        }
+
+        td {
+            padding: 18px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            vertical-align: top;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .rule-name {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            color: #FFB84D;
+            font-size: 1rem;
+        }
+
+        .rule-number {
+            font-family: 'Space Mono', monospace;
+            color: #9D4EDD;
+            font-size: 0.85rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .outcome-highlight {
+            color: #1B9BD8;
+            font-weight: 600;
+        }
+
+        .conclusion {
+            background: rgba(157, 78, 221, 0.1);
+            border: 2px solid #9D4EDD;
+            border-radius: 8px;
+            padding: 30px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .conclusion strong {
+            color: #FFB84D;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .conclusion em {
+            color: #9D4EDD;
+            font-style: normal;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .agent-circle {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .agent-circle:hover {
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+
+        .connection-path {
+            fill: none;
+            stroke-width: 2;
+            opacity: 0.5;
+        }
+
+        .arrow-marker {
+            fill: currentColor;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            #logic-diagram {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>3. The Agent's Behavior (Ternary Logic)</h1>
+        <p class="subtitle">
+            Movement and state change governed by Three Social Rules—the logic gates of behavior
+        </p>
+
+        <div id="logic-diagram">
+            <svg id="behavior-viz"></svg>
+        </div>
+
+        <div class="rules-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 22%;">ABM Rule (The Code)</th>
+                        <th style="width: 40%;">Agent's Action</th>
+                        <th style="width: 38%;">Outcome on the Map</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="rule-number">RULE 1</span>
+                            <span class="rule-name">Proximity Propagation</span>
+                        </td>
+                        <td>
+                            The agent's state (vulnerability) increases if nearby agents are also vulnerable <strong>(Local State)</strong>.
+                        </td>
+                        <td>
+                            Causes a <span class="outcome-highlight">clustered, localized spread</span> of the "toxic cloud."
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="rule-number">RULE 2</span>
+                            <span class="rule-name">Network Amplification</span>
+                        </td>
+                        <td>
+                            The agent influences, or is influenced by, another distant agent linked through a coded social tie <strong>(Intermediary State)</strong>.
+                        </td>
+                        <td>
+                            Creates <span class="outcome-highlight">"jumps" or non-contiguous pockets</span> of vulnerability across the map.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="rule-number">RULE 3</span>
+                            <span class="rule-name">Historical Vulnerability</span>
+                        </td>
+                        <td>
+                            The agent is penalized or locked into a higher state of risk if its location overlaps with a historical policy boundary <strong>(Initial State)</strong>.
+                        </td>
+                        <td>
+                            Ensures the <span class="outcome-highlight">INITIAL STATE ≠ ZERO</span> by preventing agents in redlined zones from easily becoming "un-vulnerable."
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="conclusion">
+            The final output—the <strong>KDE Visualization</strong>—is not a map of the agents themselves, but a heat map (the "toxic cloud") generated by their collective, accumulated positions after <strong>70 years of simulation</strong>. The agent is the <em>mechanism</em> of proof.
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('logic-diagram');
+        const width = Math.min(1500, container.clientWidth - 80);
+        const height = 650;
+
+        const svg = d3.select("#behavior-viz")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", [0, 0, width, height]);
+
+        // Define arrow markers
+        const defs = svg.append("defs");
+        
+        const colors = {
+            proximity: "#FF6B9D",
+            network: "#FFB84D",
+            historical: "#9D4EDD",
+            output: "#1B9BD8"
+        };
+
+        // Create arrow markers for each color
+        Object.entries(colors).forEach(([key, color]) => {
+            defs.append("marker")
+                .attr("id", `arrow-${key}`)
+                .attr("viewBox", "0 0 10 10")
+                .attr("refX", 8)
+                .attr("refY", 5)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M 0 0 L 10 5 L 0 10 z")
+                .attr("fill", color);
+        });
+
+        // Layout positions
+        const leftX = 150;
+        const centerX = width / 2;
+        const rightX = width - 150;
+        const topY = 120;
+        const midY = height / 2;
+        const bottomY = height - 120;
+
+        // Agent positions for demonstration
+        const agents = [
+            // Input agents (left side)
+            { id: "agent1", x: leftX, y: topY, vulnerability: 0, label: "Agent A", type: "input" },
+            { id: "agent2", x: leftX, y: midY, vulnerability: 0, label: "Agent B", type: "input" },
+            { id: "agent3", x: leftX, y: bottomY, vulnerability: 0, label: "Agent C", type: "input" },
+            
+            // Center processing
+            { id: "logic", x: centerX, y: midY, vulnerability: 1, label: "TERNARY\nLOGIC", type: "logic" },
+            
+            // Output visualization
+            { id: "output", x: rightX, y: midY, vulnerability: 2, label: "TOXIC\nCLOUD", type: "output" }
+        ];
+
+        // Rules visualization (top annotations)
+        const rules = [
+            { name: "1. PROXIMITY", color: colors.proximity, y: 40, icon: "◉◉◉" },
+            { name: "2. NETWORK", color: colors.network, y: 60, icon: "◉⟷◉" },
+            { name: "3. HISTORICAL", color: colors.historical, y: 80, icon: "◉₀≠0" }
+        ];
+
+        const rulesGroup = svg.append("g").attr("transform", `translate(${centerX - 150}, 0)`);
+        
+        rules.forEach(rule => {
+            const g = rulesGroup.append("g");
+            
+            g.append("text")
+                .attr("x", 0)
+                .attr("y", rule.y)
+                .attr("font-family", "Space Mono, monospace")
+                .attr("font-size", "14px")
+                .attr("font-weight", "700")
+                .attr("fill", rule.color)
+                .text(rule.icon);
+            
+            g.append("text")
+                .attr("x", 50)
+                .attr("y", rule.y)
+                .attr("font-family", "Space Mono, monospace")
+                .attr("font-size", "13px")
+                .attr("fill", rule.color)
+                .text(rule.name);
+        });
+
+        // Draw connections
+        const connectionData = [
+            // Proximity (local clustering)
+            { from: agents[0], to: agents[1], type: "proximity", label: "proximity" },
+            { from: agents[1], to: agents[2], type: "proximity", label: "" },
+            
+            // To logic center
+            { from: agents[0], to: agents[3], type: "proximity", label: "" },
+            { from: agents[1], to: agents[3], type: "network", label: "" },
+            { from: agents[2], to: agents[3], type: "historical", label: "" },
+            
+            // To output
+            { from: agents[3], to: agents[4], type: "output", label: "70 years" }
+        ];
+
+        const linkGroup = svg.append("g");
+
+        connectionData.forEach(conn => {
+            const colorKey = conn.type;
+            const color = colors[colorKey];
+            
+            // Draw curved path
+            const dx = conn.to.x - conn.from.x;
+            const dy = conn.to.y - conn.from.y;
+            const dr = Math.sqrt(dx * dx + dy * dy) * 0.3;
+            
+            linkGroup.append("path")
+                .attr("class", "connection-path")
+                .attr("d", `M ${conn.from.x} ${conn.from.y} Q ${(conn.from.x + conn.to.x)/2} ${(conn.from.y + conn.to.y)/2 - 30} ${conn.to.x} ${conn.to.y}`)
+                .attr("stroke", color)
+                .attr("marker-end", `url(#arrow-${colorKey})`);
+            
+            // Add label if exists
+            if (conn.label) {
+                const midX = (conn.from.x + conn.to.x) / 2;
+                const midY = (conn.from.y + conn.to.y) / 2 - 35;
+                
+                linkGroup.append("text")
+                    .attr("x", midX)
+                    .attr("y", midY)
+                    .attr("text-anchor", "middle")
+                    .attr("font-family", "Space Mono, monospace")
+                    .attr("font-size", "10px")
+                    .attr("fill", "#94A3B8")
+                    .text(conn.label);
+            }
+        });
+
+        // Draw proximity clustering visualization (left side)
+        const clusterGroup = svg.append("g");
+        
+        // Dotted circle showing local spread
+        clusterGroup.append("ellipse")
+            .attr("cx", leftX)
+            .attr("cy", midY)
+            .attr("rx", 80)
+            .attr("ry", 160)
+            .attr("fill", "none")
+            .attr("stroke", colors.proximity)
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "5,5")
+            .attr("opacity", 0.3);
+
+        clusterGroup.append("text")
+            .attr("x", leftX - 110)
+            .attr("y", midY)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Space Mono, monospace")
+            .attr("font-size", "10px")
+            .attr("fill", colors.proximity)
+            .text("clustered\nspread")
+            .call(wrap, 80);
+
+        // Network jump visualization (showing non-contiguous connection)
+        const jumpPath = svg.append("g");
+        jumpPath.append("path")
+            .attr("d", `M ${leftX} ${topY} Q ${leftX + 100} ${topY - 50} ${leftX} ${bottomY}`)
+            .attr("stroke", colors.network)
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "8,4")
+            .attr("fill", "none")
+            .attr("opacity", 0.4);
+        
+        jumpPath.append("text")
+            .attr("x", leftX + 70)
+            .attr("y", midY)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Space Mono, monospace")
+            .attr("font-size", "10px")
+            .attr("fill", colors.network)
+            .text("non-contiguous\njump");
+
+        // Draw agents
+        const agentGroup = svg.append("g");
+
+        agents.forEach((agent, i) => {
+            const g = agentGroup.append("g")
+                .attr("class", "agent-circle")
+                .attr("transform", `translate(${agent.x}, ${agent.y})`);
+
+            const radius = agent.type === "logic" ? 70 : agent.type === "output" ? 80 : 35;
+            const color = agent.type === "logic" ? colors.network : 
+                         agent.type === "output" ? colors.output : 
+                         colors.proximity;
+
+            // Circle
+            g.append("circle")
+                .attr("r", radius)
+                .attr("fill", agent.type === "output" ? `${color}40` : `${color}20`)
+                .attr("stroke", color)
+                .attr("stroke-width", agent.type === "logic" || agent.type === "output" ? 3 : 2);
+
+            // Inner circle for vulnerability state
+            if (agent.type !== "logic" && agent.type !== "output") {
+                g.append("circle")
+                    .attr("r", 8)
+                    .attr("fill", agent.vulnerability === 0 ? "#1B9BD8" : 
+                                 agent.vulnerability === 1 ? "#FFB84D" : "#FF6B9D");
+            }
+
+            // Label
+            const lines = agent.label.split('\n');
+            lines.forEach((line, idx) => {
+                g.append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("dy", `${idx * 1.2 - (lines.length - 1) * 0.5}em`)
+                    .attr("font-family", "Space Mono, monospace")
+                    .attr("font-size", agent.type === "logic" || agent.type === "output" ? "14px" : "11px")
+                    .attr("font-weight", agent.type === "logic" || agent.type === "output" ? "700" : "400")
+                    .attr("fill", "#fff")
+                    .text(line);
+            });
+
+            // Stagger animation
+            g.style("opacity", 0)
+                .transition()
+                .delay(i * 150)
+                .duration(500)
+                .style("opacity", 1);
+        });
+
+        // Add "Initial State ≠ 0" annotation
+        svg.append("rect")
+            .attr("x", leftX - 100)
+            .attr("y", bottomY + 50)
+            .attr("width", 200)
+            .attr("height", 40)
+            .attr("fill", "rgba(157, 78, 221, 0.1)")
+            .attr("stroke", colors.historical)
+            .attr("stroke-width", 2)
+            .attr("rx", 4);
+
+        svg.append("text")
+            .attr("x", leftX)
+            .attr("y", bottomY + 75)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Space Mono, monospace")
+            .attr("font-size", "12px")
+            .attr("font-weight", "700")
+            .attr("fill", colors.historical)
+            .text("INITIAL STATE ≠ 0");
+
+        // Add KDE output annotation
+        svg.append("text")
+            .attr("x", rightX)
+            .attr("y", midY + 110)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Space Mono, monospace")
+            .attr("font-size", "11px")
+            .attr("fill", "#94A3B8")
+            .text("Heat Map Visualization")
+            .call(wrap, 150);
+
+        svg.append("text")
+            .attr("x", rightX)
+            .attr("y", midY + 135)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Space Mono, monospace")
+            .attr("font-size", "10px")
+            .attr("fill", "#94A3B8")
+            .text("(Collective Accumulated Positions)");
+
+        function wrap(text, width) {
+            text.each(function() {
+                const text = d3.select(this);
+                const words = text.text().split(/\s+/).reverse();
+                let word;
+                let line = [];
+                let lineNumber = 0;
+                const lineHeight = 1.1;
+                const y = text.attr("y");
+                const dy = parseFloat(text.attr("dy")) || 0;
+                let tspan = text.text(null).append("tspan").attr("x", text.attr("x")).attr("y", y).attr("dy", dy + "em");
+                
+                while (word = words.pop()) {
+                    line.push(word);
+                    tspan.text(line.join(" "));
+                    if (tspan.node().getComputedTextLength() > width) {
+                        line.pop();
+                        tspan.text(line.join(" "));
+                        line = [word];
+                        tspan = text.append("tspan")
+                            .attr("x", text.attr("x"))
+                            .attr("y", y)
+                            .attr("dy", ++lineNumber * lineHeight + dy + "em")
+                            .text(word);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

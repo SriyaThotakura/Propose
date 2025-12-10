@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feral Map Technical Concepts</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        .nav-btn.active {
+            background: rgba(255,215,0,0.3);
+            border-color: gold;
+        }
+        .diagram-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+        }
+        .diagram-container.active {
+            display: block;
+        }
+        .diagram-title {
+            color: #1e3c72;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .diagram-subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+        .node circle {
+            stroke: #fff;
+            stroke-width: 3px;
+        }
+        .node text {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .link {
+            fill: none;
+            stroke-width: 2px;
+        }
+        .arrow {
+            fill: #666;
+        }
+        .heatmap-cell {
+            stroke: rgba(255,255,255,0.2);
+            stroke-width: 1;
+        }
+        .isoline {
+            fill: none;
+            stroke: gold;
+            stroke-width: 3;
+            stroke-dasharray: 5,5;
+            animation: dash 20s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+        .alert-pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .label {
+            font-size: 13px;
+            font-weight: 600;
+            fill: #333;
+        }
+        .description {
+            color: #444;
+            line-height: 1.6;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(30,60,114,0.05);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ Feral Map Project: Technical Concepts</h1>
+        
+        <div class="nav-buttons">
+            <button class="nav-btn active" onclick="showDiagram('kde')">KDE Visualization</button>
+            <button class="nav-btn" onclick="showDiagram('iso')">Iso Surface</button>
+            <button class="nav-btn" onclick="showDiagram('forensics')">Forensics Proof</button>
+            <button class="nav-btn" onclick="showDiagram('perma')">Perma-Computing</button>
+            <button class="nav-btn" onclick="showDiagram('cron')">Cron Job</button>
+        </div>
+
+        <div id="kde-diagram" class="diagram-container active">
+            <h2 class="diagram-title">Kernel Density Estimation (KDE)</h2>
+            <p class="diagram-subtitle">Live Demo 1: The Toxic Cloud Visualization</p>
+            <svg id="kde-svg" width="900" height="600"></svg>
+            <div class="description">
+                <strong>Layer 4 Visualization:</strong> KDE transforms aggregated agent position data into a smooth heat map (the "toxic cloud"). This technique makes invisible structural violence visible by showing concentration patterns of environmental hazards across the GeoJSON map.
+            </div>
+        </div>
+
+        <div id="iso-diagram" class="diagram-container">
+            <h2 class="diagram-title">Iso Surface Generation</h2>
+            <p class="diagram-subtitle">Live Demo 1: Policy Zone Delimitation</p>
+            <svg id="iso-svg" width="900" height="600"></svg>
+            <div class="description">
+                <strong>From Heat to Action:</strong> By drawing isolines around concentrated KDE areas, we create specific, measurable policy zones. These boundaries transform continuous density data into discrete intervention areas that can be targeted with specific environmental policies.
+            </div>
+        </div>
+
+        <div id="forensics-diagram" class="diagram-container">
+            <h2 class="diagram-title">Forensics Proof</h2>
+            <p class="diagram-subtitle">Live Demo 2: Forensic Alert Mechanism</p>
+            <svg id="forensics-svg" width="900" height="600"></svg>
+            <div class="description">
+                <strong>Evidence Generation:</strong> When PM2.5 readings exceed 35 μg/m³, the system triggers a Forensic Alert. This transforms raw sensor data into actionable evidence for policy advocacy, creating a permanent record of environmental violations.
+            </div>
+        </div>
+
+        <div id="perma-diagram" class="diagram-container">
+            <h2 class="diagram-title">Perma-Computing Architecture</h2>
+            <p class="diagram-subtitle">Critical Framework: Durable, Accessible, Open</p>
+            <svg id="perma-svg" width="900" height="600"></svg>
+            <div class="description">
+                <strong>Built to Last:</strong> This ethical and technical philosophy ensures the system runs on accessible hardware (Raspberry Pi/browser), operates client-side, and remains open-source. Designed to outlast institutional support, creating a permanent public archive.
+            </div>
+        </div>
+
+        <div id="cron-diagram" class="diagram-container">
+            <h2 class="diagram-title">Cron Job Scheduling</h2>
+            <p class="diagram-subtitle">Dashboard Alert Automation</p>
+            <svg id="cron-svg" width="900" height="600"></svg>
+            <div class="description">
+                <strong>Automated Vigilance:</strong> The sensor data feed runs scheduled checks every hour through cron jobs. This simple, reliable automation executes Forensic Alert checks and distributes community notifications without human intervention.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showDiagram(id) {
+            document.querySelectorAll('.diagram-container').forEach(d => d.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`${id}-diagram`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // KDE Diagram
+        const kdeSvg = d3.select('#kde-svg');
+        const kdeWidth = 900, kdeHeight = 600;
+        
+        // Create grid data
+        const gridSize = 20;
+        const gridData = [];
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                const x = i / gridSize;
+                const y = j / gridSize;
+                const dx = x - 0.5, dy = y - 0.5;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                const intensity = Math.exp(-dist * 5) * 0.8 + 
+                                Math.exp(-Math.pow((x-0.3)*10, 2) - Math.pow((y-0.7)*10, 2)) * 0.5 +
+                                Math.exp(-Math.pow((x-0.7)*10, 2) - Math.pow((y-0.3)*10, 2)) * 0.4;
+                gridData.push({x: i, y: j, value: intensity});
+            }
+        }
+
+        const colorScale = d3.scaleSequential(d3.interpolateYlOrRd)
+            .domain([0, d3.max(gridData, d => d.value)]);
+
+        const cellSize = 25;
+        const kdeG = kdeSvg.append('g').attr('transform', 'translate(150, 100)');
+        
+        kdeG.selectAll('.heatmap-cell')
+            .data(gridData)
+            .enter()
+            .append('rect')
+            .attr('class', 'heatmap-cell')
+            .attr('x', d => d.x * cellSize)
+            .attr('y', d => d.y * cellSize)
+            .attr('width', cellSize)
+            .attr('height', cellSize)
+            .attr('fill', d => colorScale(d.value))
+            .attr('opacity', 0.8);
+
+        // Add agent points
+        const agents = [{x: 0.5, y: 0.5}, {x: 0.3, y: 0.7}, {x: 0.7, y: 0.3}, {x: 0.45, y: 0.55}, {x: 0.35, y: 0.65}];
+        kdeG.selectAll('.agent')
+            .data(agents)
+            .enter()
+            .append('circle')
+            .attr('cx', d => d.x * gridSize * cellSize)
+            .attr('cy', d => d.y * gridSize * cellSize)
+            .attr('r', 4)
+            .attr('fill', '#000')
+            .attr('stroke', '#fff')
+            .attr('stroke-width', 2);
+
+        kdeSvg.append('text')
+            .attr('x', 150)
+            .attr('y', 70)
+            .attr('class', 'label')
+            .text('Agent Positions → KDE Heat Map → "Toxic Cloud"');
+
+        // Iso Surface Diagram
+        const isoSvg = d3.select('#iso-svg');
+        const isoG = isoSvg.append('g').attr('transform', 'translate(150, 100)');
+        
+        // Reuse heat map
+        isoG.selectAll('.heatmap-cell')
+            .data(gridData)
+            .enter()
+            .append('rect')
+            .attr('class', 'heatmap-cell')
+            .attr('x', d => d.x * cellSize)
+            .attr('y', d => d.y * cellSize)
+            .attr('width', cellSize)
+            .attr('height', cellSize)
+            .attr('fill', d => colorScale(d.value))
+            .attr('opacity', 0.6);
+
+        // Draw isoline
+        const threshold = 0.5;
+        const isolinePoints = [
+            {x: 0.35, y: 0.2}, {x: 0.25, y: 0.35}, {x: 0.2, y: 0.5},
+            {x: 0.25, y: 0.65}, {x: 0.35, y: 0.8}, {x: 0.5, y: 0.85},
+            {x: 0.65, y: 0.8}, {x: 0.8, y: 0.65}, {x: 0.85, y: 0.5},
+            {x: 0.8, y: 0.35}, {x: 0.65, y: 0.2}, {x: 0.5, y: 0.15}
+        ].map(p => [p.x * gridSize * cellSize, p.y * gridSize * cellSize]);
+
+        const lineGenerator = d3.line().curve(d3.curveCatmullRomClosed);
+        
+        isoG.append('path')
+            .attr('class', 'isoline')
+            .attr('d', lineGenerator(isolinePoints));
+
+        // Policy zones
+        isoG.append('text')
+            .attr('x', 250)
+            .attr('y', 250)
+            .attr('text-anchor', 'middle')
+            .attr('class', 'label')
+            .attr('fill', 'gold')
+            .attr('font-size', '16px')
+            .text('POLICY ZONE 1');
+
+        isoSvg.append('text')
+            .attr('x', 150)
+            .attr('y', 70)
+            .attr('class', 'label')
+            .text('Isoline Boundary → Measurable Intervention Zone');
+
+        // Forensics Proof Diagram
+        const forSvg = d3.select('#forensics-svg');
+        const forG = forSvg.append('g').attr('transform', 'translate(100, 80)');
+
+        // Sensor reading flow
+        const forensicsSteps = [
+            {x: 100, y: 150, label: 'PM2.5 Sensor\nReading', color: '#4a90e2'},
+            {x: 300, y: 150, label: 'Threshold Check\n(35 μg/m³)', color: '#f5a623'},
+            {x: 500, y: 150, label: 'FORENSIC\nALERT', color: '#d0021b'},
+            {x: 700, y: 150, label: 'Policy\nEvidence', color: '#7ed321'}
+        ];
+
+        forensicsSteps.forEach((step, i) => {
+            const g = forG.append('g');
+            
+            g.append('rect')
+                .attr('x', step.x - 60)
+                .attr('y', step.y - 40)
+                .attr('width', 120)
+                .attr('height', 80)
+                .attr('rx', 10)
+                .attr('fill', step.color)
+                .attr('opacity', i === 2 ? 0.9 : 0.7)
+                .attr('class', i === 2 ? 'alert-pulse' : '');
+
+            g.append('text')
+                .attr('x', step.x)
+                .attr('y', step.y)
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#fff')
+                .attr('font-weight', 'bold')
+                .selectAll('tspan')
+                .data(step.label.split('\n'))
+                .enter()
+                .append('tspan')
+                .attr('x', step.x)
+                .attr('dy', (d, j) => j === 0 ? 0 : 18)
+                .text(d => d);
+
+            if (i < forensicsSteps.length - 1) {
+                forG.append('line')
+                    .attr('x1', step.x + 60)
+                    .attr('y1', step.y)
+                    .attr('x2', forensicsSteps[i+1].x - 60)
+                    .attr('y2', forensicsSteps[i+1].y)
+                    .attr('stroke', '#666')
+                    .attr('stroke-width', 3)
+                    .attr('marker-end', 'url(#arrowhead)');
+            }
+        });
+
+        // Arrow marker
+        forSvg.append('defs').append('marker')
+            .attr('id', 'arrowhead')
+            .attr('markerWidth', 10)
+            .attr('markerHeight', 10)
+            .attr('refX', 9)
+            .attr('refY', 3)
+            .attr('orient', 'auto')
+            .append('polygon')
+            .attr('points', '0 0, 10 3, 0 6')
+            .attr('fill', '#666');
+
+        // Reading value
+        forG.append('text')
+            .attr('x', 100)
+            .attr('y', 260)
+            .attr('text-anchor', 'middle')
+            .attr('class', 'label')
+            .attr('fill', '#d0021b')
+            .attr('font-size', '20px')
+            .attr('font-weight', 'bold')
+            .text('42 μg/m³');
+
+        // Perma-Computing Diagram
+        const permSvg = d3.select('#perma-svg');
+        const permG = permSvg.append('g').attr('transform', 'translate(450, 300)');
+
+        const principles = [
+            {angle: 0, label: 'Client-Side', icon: '💻'},
+            {angle: 72, label: 'Open Source', icon: '🔓'},
+            {angle: 144, label: 'Low-Power HW', icon: '🔌'},
+            {angle: 216, label: 'Durable', icon: '⏳'},
+            {angle: 288, label: 'Public Archive', icon: '📚'}
+        ];
+
+        const radius = 180;
+
+        // Center circle
+        permG.append('circle')
+            .attr('r', 60)
+            .attr('fill', '#4a90e2')
+            .attr('opacity', 0.8);
+
+        permG.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('dy', -5)
+            .attr('fill', '#fff')
+            .attr('font-size', '18px')
+            .attr('font-weight', 'bold')
+            .text('PERMA-');
+        
+        permG.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('dy', 15)
+            .attr('fill', '#fff')
+            .attr('font-size', '18px')
+            .attr('font-weight', 'bold')
+            .text('COMPUTING');
+
+        principles.forEach(p => {
+            const rad = (p.angle - 90) * Math.PI / 180;
+            const x = Math.cos(rad) * radius;
+            const y = Math.sin(rad) * radius;
+
+            permG.append('line')
+                .attr('x1', 0)
+                .attr('y1', 0)
+                .attr('x2', x)
+                .attr('y2', y)
+                .attr('stroke', '#ccc')
+                .attr('stroke-width', 2);
+
+            const g = permG.append('g')
+                .attr('transform', `translate(${x}, ${y})`);
+
+            g.append('circle')
+                .attr('r', 50)
+                .attr('fill', '#7ed321')
+                .attr('opacity', 0.7);
+
+            g.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('dy', -10)
+                .attr('font-size', '30px')
+                .text(p.icon);
+
+            g.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('dy', 25)
+                .attr('fill', '#333')
+                .attr('font-weight', 'bold')
+                .attr('font-size', '13px')
+                .text(p.label);
+        });
+
+        // Cron Job Diagram
+        const cronSvg = d3.select('#cron-svg');
+        const cronG = cronSvg.append('g').attr('transform', 'translate(100, 150)');
+
+        // Timeline
+        const hours = [0, 1, 2, 3, 4];
+        const hourWidth = 150;
+
+        hours.forEach((h, i) => {
+            const x = i * hourWidth;
+            
+            cronG.append('circle')
+                .attr('cx', x)
+                .attr('cy', 100)
+                .attr('r', 40)
+                .attr('fill', '#f5a623')
+                .attr('opacity', 0.7);
+
+            cronG.append('text')
+                .attr('x', x)
+                .attr('y', 105)
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#fff')
+                .attr('font-weight', 'bold')
+                .attr('font-size', '16px')
+                .text(`Hour ${h}`);
+
+            // Check icon
+            cronG.append('text')
+                .attr('x', x)
+                .attr('y', 200)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '24px')
+                .text('✓');
+
+            cronG.append('text')
+                .attr('x', x)
+                .attr('y', 230)
+                .attr('text-anchor', 'middle')
+                .attr('class', 'label')
+                .attr('font-size', '11px')
+                .text('Data Check');
+
+            if (i < hours.length - 1) {
+                cronG.append('line')
+                    .attr('x1', x + 40)
+                    .attr('y1', 100)
+                    .attr('x2', x + hourWidth - 40)
+                    .attr('y2', 100)
+                    .attr('stroke', '#666')
+                    .attr('stroke-width', 2)
+                    .attr('stroke-dasharray', '5,5');
+            }
+        });
+
+        // Notification
+        cronG.append('rect')
+            .attr('x', 200)
+            .attr('y', 280)
+            .attr('width', 300)
+            .attr('height', 80)
+            .attr('rx', 10)
+            .attr('fill', '#d0021b')
+            .attr('opacity', 0.8)
+            .attr('class', 'alert-pulse');
+
+        cronG.append('text')
+            .attr('x', 350)
+            .attr('y', 315)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#fff')
+            .attr('font-weight', 'bold')
+            .attr('font-size', '16px')
+            .text('🔔 Community Alert Sent');
+
+        cronG.append('text')
+            .attr('x', 350)
+            .attr('y', 340)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#fff')
+            .attr('font-size', '12px')
+            .text('Automated threshold notification');
+
+        cronSvg.append('text')
+            .attr('x', 450)
+            .attr('y', 80)
+            .attr('text-anchor', 'middle')
+            .attr('class', 'label')
+            .attr('font-size', '16px')
+            .text('Scheduled Hourly Checks → Automated Alerts');
+    </script>
+</body>
+</html>

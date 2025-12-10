@@ -1,0 +1,119 @@
+:root {
+    --dark-bg: #0A0A10;
+    --neon-blue: #00CCFF;
+    --neon-pink: #FF6B9D;
+    --neon-purple: #B026FF;
+    --glowing-gold: #FFD700;
+    --alert-red: #FF3333;
+    --monospace-font: 'Consolas', 'Courier New', monospace;
+}
+
+body {
+    margin: 0;
+    background-color: var(--dark-bg);
+    color: var(--neon-blue);
+    font-family: var(--monospace-font);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header Styling */
+header {
+    padding: 15px;
+    border-bottom: 1px solid var(--neon-blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+h1, h2 { margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+h1 { font-size: 1.2rem; color: var(--neon-blue); text-shadow: 0 0 5px var(--neon-blue); }
+
+/* Simulation Canvas */
+#sim-container {
+    position: relative;
+    flex-grow: 1;
+    background: #000;
+}
+canvas { display: block; width: 100%; height: 100%; }
+
+/* Dashboard Specifics */
+.metric-box {
+    border: 1px solid var(--neon-blue);
+    padding: 20px;
+    margin: 20px;
+    text-align: center;
+    width: 300px;
+}
+
+.value-display {
+    font-size: 4rem;
+    font-weight: bold;
+    margin: 20px 0;
+    transition: all 0.2s ease;
+}
+
+.status-banner {
+    padding: 15px;
+    margin-top: 20px;
+    border: 1px solid #333;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* Controls */
+.controls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+button {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 10px 20px;
+    font-family: var(--monospace-font);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+button:hover {
+    background: var(--neon-blue);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+/* Special Button Styles */
+.btn-intervention { border-color: var(--neon-purple); color: var(--neon-purple); }
+.btn-intervention:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 15px var(--neon-purple); }
+
+.btn-alert { border-color: var(--alert-red); color: var(--alert-red); }
+.btn-alert:hover { background: var(--alert-red); color: #fff; box-shadow: 0 0 15px var(--alert-red); }
+
+/* Animation Classes */
+.gold-alert {
+    color: var(--glowing-gold) !important;
+    text-shadow: 0 0 10px var(--glowing-gold), 0 0 20px var(--glowing-gold);
+    animation: flash 1s infinite alternate;
+}
+
+.alert-box-active {
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid var(--glowing-gold);
+    color: var(--glowing-gold);
+}
+
+@keyframes flash {
+    from { opacity: 1; }
+    to { opacity: 0.5; }
+}

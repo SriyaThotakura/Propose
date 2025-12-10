@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feral Agent - Conceptual Definition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #050814;
+            color: #E2E8F0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(120deg, #FF6B9D, #FFB84D, #9D4EDD);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            color: #FFB84D;
+            margin-bottom: 3rem;
+            padding: 12px 20px;
+            background: rgba(255, 184, 77, 0.1);
+            border-left: 3px solid #FFB84D;
+            display: inline-block;
+        }
+
+        #diagram-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 3rem;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 3rem;
+        }
+
+        .legend-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .legend-item h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #FFB84D;
+        }
+
+        .legend-item p {
+            font-size: 0.9rem;
+            color: #94A3B8;
+            line-height: 1.5;
+        }
+
+        .node-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            pointer-events: none;
+        }
+
+        .node-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            pointer-events: none;
+            fill: #94A3B8;
+        }
+
+        .link {
+            fill: none;
+            stroke-width: 2px;
+            opacity: 0.6;
+        }
+
+        .link-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            fill: #94A3B8;
+        }
+
+        .center-node {
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            #diagram-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Conceptual Definition of the Feral Agent</h1>
+        <p class="tagline">
+            "Infrastructural Violence is Algorithmic"
+        </p>
+
+        <div id="diagram-container">
+            <svg id="concept-diagram"></svg>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <h3>NOT A Human/Resident</h3>
+                <p>The agent is not an individual person, household, or demographic group. It transcends individual human experience.</p>
+            </div>
+            <div class="legend-item">
+                <h3>NOT Physical Infrastructure</h3>
+                <p>Not a road, building, pipe, or tangible object. It exists in computational space as an abstraction.</p>
+            </div>
+            <div class="legend-item">
+                <h3>IS A Digital Proxy</h3>
+                <p>A computational representation of accumulated vulnerability that can be simulated, measured, and analyzed.</p>
+            </div>
+            <div class="legend-item">
+                <h3>IS Algorithmic Proof</h3>
+                <p>Its behavior demonstrates that structural violence propagates through calculable, systematic patterns—not random chance.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('diagram-container');
+        const width = Math.min(1400, container.clientWidth);
+        const height = 800;
+
+        const svg = d3.select("#concept-diagram")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", [0, 0, width, height]);
+
+        // Define gradient
+        const defs = svg.append("defs");
+        
+        const gradient = defs.append("radialGradient")
+            .attr("id", "center-gradient");
+        gradient.append("stop").attr("offset", "0%").attr("stop-color", "#FF6B9D").attr("stop-opacity", 0.8);
+        gradient.append("stop").attr("offset", "100%").attr("stop-color", "#9D4EDD").attr("stop-opacity", 0.4);
+
+        // Create glow filter
+        const filter = defs.append("filter")
+            .attr("id", "glow");
+        filter.append("feGaussianBlur")
+            .attr("stdDeviation", "3")
+            .attr("result", "coloredBlur");
+        const feMerge = filter.append("feMerge");
+        feMerge.append("feMergeNode").attr("in", "coloredBlur");
+        feMerge.append("feMergeNode").attr("in", "SourceGraphic");
+
+        // Central concept
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        // Data structure
+        const nodes = [
+            // Center node
+            { id: "center", label: "FERAL AGENT", desc: "Dynamic Abstraction", x: centerX, y: centerY, r: 80, color: "url(#center-gradient)", type: "center" },
+            
+            // What it IS (right side)
+            { id: "proxy", label: "Digital Proxy", desc: "Computational representation", x: centerX + 300, y: centerY - 150, r: 60, color: "#1B9BD8", type: "is" },
+            { id: "vulnerability", label: "Accumulated Vulnerability", desc: "70 years of policy consequence", x: centerX + 350, y: centerY + 50, r: 60, color: "#FFB84D", type: "is" },
+            { id: "algorithm", label: "Algorithmic Propagation", desc: "Systematic spread of neglect", x: centerX + 300, y: centerY + 200, r: 60, color: "#9D4EDD", type: "is" },
+            
+            // What it is NOT (left side)
+            { id: "not-human", label: "NOT Human", desc: "Not a person or resident", x: centerX - 300, y: centerY - 150, r: 50, color: "#FF6B9D", type: "not" },
+            { id: "not-infra", label: "NOT Infrastructure", desc: "Not physical objects", x: centerX - 300, y: centerY + 150, r: 50, color: "#FF8A5B", type: "not" },
+            
+            // Historical inputs (top)
+            { id: "redlining", label: "Redlining Maps", desc: "Historical disinvestment", x: centerX - 150, y: centerY - 300, r: 45, color: "#FF6B9D", type: "input" },
+            { id: "expressway", label: "Cross-Bronx Expressway", desc: "Infrastructure violence", x: centerX + 150, y: centerY - 300, r: 45, color: "#FF8A5B", type: "input" },
+            
+            // Outputs (bottom)
+            { id: "proof", label: "Computational Proof", desc: "Violence is algorithmic", x: centerX, y: centerY + 300, r: 55, color: "#1B9BD8", type: "output" }
+        ];
+
+        const links = [
+            // IS connections
+            { source: "center", target: "proxy", label: "instantiates as", curved: true },
+            { source: "center", target: "vulnerability", label: "embodies", curved: true },
+            { source: "center", target: "algorithm", label: "executes", curved: true },
+            
+            // NOT connections
+            { source: "center", target: "not-human", label: "≠", curved: true },
+            { source: "center", target: "not-infra", label: "≠", curved: true },
+            
+            // Input connections
+            { source: "redlining", target: "center", label: "initializes", curved: false },
+            { source: "expressway", target: "center", label: "triggers", curved: false },
+            
+            // Output connections
+            { source: "center", target: "proof", label: "demonstrates", curved: false },
+            
+            // Cross connections
+            { source: "vulnerability", target: "proof", label: "", curved: true },
+            { source: "algorithm", target: "proof", label: "", curved: true }
+        ];
+
+        // Draw links
+        const linkGroup = svg.append("g");
+
+        links.forEach(link => {
+            const source = nodes.find(n => n.id === link.source);
+            const target = nodes.find(n => n.id === link.target);
+            
+            if (link.curved) {
+                const dx = target.x - source.x;
+                const dy = target.y - source.y;
+                const dr = Math.sqrt(dx * dx + dy * dy) * 0.7;
+                
+                linkGroup.append("path")
+                    .attr("class", "link")
+                    .attr("d", `M ${source.x} ${source.y} A ${dr} ${dr} 0 0 1 ${target.x} ${target.y}`)
+                    .attr("stroke", link.source === "center" ? source.color : "#666")
+                    .attr("opacity", link.label === "≠" ? 0.3 : 0.6);
+            } else {
+                linkGroup.append("line")
+                    .attr("class", "link")
+                    .attr("x1", source.x)
+                    .attr("y1", source.y)
+                    .attr("x2", target.x)
+                    .attr("y2", target.y)
+                    .attr("stroke", "#666");
+            }
+            
+            // Add labels
+            if (link.label) {
+                const midX = (source.x + target.x) / 2;
+                const midY = (source.y + target.y) / 2;
+                
+                linkGroup.append("text")
+                    .attr("class", "link-label")
+                    .attr("x", midX)
+                    .attr("y", midY)
+                    .attr("text-anchor", "middle")
+                    .attr("dy", -5)
+                    .text(link.label);
+            }
+        });
+
+        // Draw nodes
+        const nodeGroup = svg.append("g");
+
+        nodes.forEach(node => {
+            const g = nodeGroup.append("g")
+                .attr("transform", `translate(${node.x}, ${node.y})`);
+            
+            // Add pulsing circle for center node
+            if (node.type === "center") {
+                g.append("circle")
+                    .attr("r", node.r + 10)
+                    .attr("fill", "none")
+                    .attr("stroke", "#FF6B9D")
+                    .attr("stroke-width", 2)
+                    .attr("class", "pulse");
+            }
+            
+            // Main circle
+            g.append("circle")
+                .attr("r", node.r)
+                .attr("fill", node.color)
+                .attr("stroke", "#fff")
+                .attr("stroke-width", node.type === "center" ? 3 : 2)
+                .attr("opacity", node.type === "not" ? 0.4 : 0.9)
+                .attr("filter", node.type === "center" ? "url(#glow)" : null);
+            
+            // Strike-through for NOT nodes
+            if (node.type === "not") {
+                g.append("line")
+                    .attr("x1", -node.r * 0.7)
+                    .attr("y1", 0)
+                    .attr("x2", node.r * 0.7)
+                    .attr("y2", 0)
+                    .attr("stroke", "#FF6B9D")
+                    .attr("stroke-width", 3);
+            }
+            
+            // Label
+            g.append("text")
+                .attr("class", "node-label")
+                .attr("text-anchor", "middle")
+                .attr("dy", node.type === "center" ? "-0.3em" : "0.1em")
+                .attr("fill", "#fff")
+                .text(node.label)
+                .call(wrap, node.r * 1.8);
+            
+            // Description
+            g.append("text")
+                .attr("class", "node-desc")
+                .attr("text-anchor", "middle")
+                .attr("dy", node.type === "center" ? "1.2em" : "1.5em")
+                .text(node.desc)
+                .call(wrap, node.r * 1.8);
+        });
+
+        // Text wrapping function
+        function wrap(text, width) {
+            text.each(function() {
+                const text = d3.select(this);
+                const words = text.text().split(/\s+/).reverse();
+                let word;
+                let line = [];
+                let lineNumber = 0;
+                const lineHeight = 1.1;
+                const y = text.attr("y") || 0;
+                const dy = parseFloat(text.attr("dy"));
+                let tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+                
+                while (word = words.pop()) {
+                    line.push(word);
+                    tspan.text(line.join(" "));
+                    if (tspan.node().getComputedTextLength() > width) {
+                        line.pop();
+                        tspan.text(line.join(" "));
+                        line = [word];
+                        tspan = text.append("tspan")
+                            .attr("x", 0)
+                            .attr("y", y)
+                            .attr("dy", ++lineNumber * lineHeight + dy + "em")
+                            .text(word);
+                    }
+                }
+            });
+        }
+
+        // Add title annotation
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", 40)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Space Mono, monospace")
+            .attr("font-size", "16px")
+            .attr("fill", "#9D4EDD")
+            .text("// A dynamic abstraction of socio-economic vulnerability and policy consequence");
+    </script>
+</body>
+</html>

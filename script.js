@@ -97,23 +97,10 @@ function initTacticalScene() {
     // Load granular city-type layer from GeoJSON
     loadCityTypeLayer(scene);
 
-    // Raycasting for interactive city layer
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    const infoEl = document.getElementById('city-info');
-
-    function handlePointerMove(event) {
-        const rect = renderer.domElement.getBoundingClientRect();
-        const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-        mouse.set(x, y);
-        lastPointer.x = event.clientX;
-        lastPointer.y = event.clientY;
-    }
-
-    renderer.domElement.addEventListener('pointermove', handlePointerMove);
-
-    let hoveredMesh = null;
+    // Disabled interactive elements for cold open
+    const cityInfoEl = document.createElement('div');
+    cityInfoEl.className = 'city-info';
+    cityInfoEl.style.display = 'none'; // Ensure it's hidden
 
     // Animation loop
     let startTime = performance.now();
@@ -138,42 +125,22 @@ function initTacticalScene() {
             h.material.opacity = intensity;
         });
 
-        // City layer hover detection
-        if (CITY_MESHES.length) {
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(CITY_MESHES, false);
-            const hit = intersects.length ? intersects[0].object : null;
-
-            if (hit !== hoveredMesh) {
-                if (hoveredMesh && hoveredMesh.material && hoveredMesh.userData.baseEmissive) {
-                    hoveredMesh.material.emissive.setHex(hoveredMesh.userData.baseEmissive);
-                    hoveredMesh.material.opacity = hoveredMesh.userData.baseOpacity;
-                }
-                hoveredMesh = hit;
-
-                if (hoveredMesh && hoveredMesh.material) {
-                    hoveredMesh.material.emissive.setHex(0xffffff);
-                    hoveredMesh.material.opacity = 1;
-                    updateCityInfo(infoEl, hoveredMesh.userData.props || {});
-                } else {
-                    updateCityInfo(infoEl, null);
-                }
-            }
-        }
+        // Interactive elements disabled for cold open
 
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
     }
     requestAnimationFrame(animate);
 
-    // Handle resize
-    window.addEventListener('resize', () => {
+    // Handle resize (simplified, no interaction)
+    function handleResize() {
         const w = container.clientWidth || container.offsetWidth || width;
         const h = container.clientHeight || container.offsetHeight || height;
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
-    });
+    }
+    window.addEventListener('resize', handleResize);
 }
 
 function initIsochroneScene() {
@@ -247,28 +214,6 @@ function initIsochroneScene() {
         camera.position.z = Math.sin(ang) * radius;
         camera.position.y = 40 + Math.sin(t * 0.4) * 2;
         camera.lookAt(0, 0, 0);
-
-        if (ISOCHRONE_SPEARS.length) {
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(ISOCHRONE_SPEARS, false);
-            const hit = intersects.length ? intersects[0].object : null;
-
-            if (hit !== hoveredMesh) {
-                if (hoveredMesh && hoveredMesh.material && hoveredMesh.userData.baseEmissive != null) {
-                    hoveredMesh.material.emissive.setHex(hoveredMesh.userData.baseEmissive);
-                    hoveredMesh.material.opacity = hoveredMesh.userData.baseOpacity;
-                }
-                hoveredMesh = hit;
-
-                if (hoveredMesh && hoveredMesh.material) {
-                    hoveredMesh.material.emissive.setHex(0xffffff);
-                    hoveredMesh.material.opacity = 1;
-                    updateIsochroneInfo(infoEl, hoveredMesh.userData.props || {});
-                } else {
-                    updateIsochroneInfo(infoEl, null);
-                }
-            }
-        }
 
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
@@ -626,23 +571,7 @@ function initSecondaryInterventionScene() {
     dirLight.position.set(15, 30, 20);
     scene.add(dirLight);
 
-    loadSecondaryInterventionLayer(scene);
-
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    const infoEl = document.getElementById('city-info');
-    let hoveredMesh = null;
-
-    function handlePointerMove(event) {
-        const rect = renderer.domElement.getBoundingClientRect();
-        const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-        mouse.set(x, y);
-        lastPointer.x = event.clientX;
-        lastPointer.y = event.clientY;
-    }
-
-    renderer.domElement.addEventListener('pointermove', handlePointerMove);
+    loadSecondaryInteractionLayer(scene);
 
     let radius = 38;
     let targetRadius = 38;
@@ -670,27 +599,7 @@ function initSecondaryInterventionScene() {
         camera.position.y = 32 + Math.sin(t * 0.3) * 2;
         camera.lookAt(0, 0, 0);
 
-        if (SECONDARY_MESHES.length) {
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(SECONDARY_MESHES, false);
-            const hit = intersects.length ? intersects[0].object : null;
-
-            if (hit !== hoveredMesh) {
-                if (hoveredMesh && hoveredMesh.material && hoveredMesh.userData.baseEmissive != null) {
-                    hoveredMesh.material.emissive.setHex(hoveredMesh.userData.baseEmissive);
-                    hoveredMesh.material.opacity = hoveredMesh.userData.baseOpacity;
-                }
-                hoveredMesh = hit;
-
-                if (hoveredMesh && hoveredMesh.material) {
-                    hoveredMesh.material.emissive.setHex(0xffffff);
-                    hoveredMesh.material.opacity = 1;
-                    updateSecondaryInfo(infoEl, hoveredMesh.userData.props || {});
-                } else {
-                    updateSecondaryInfo(infoEl, null);
-                }
-            }
-        }
+        // Removed mesh hover and info updates
 
         renderer.render(scene, camera);
         requestAnimationFrame(animate);

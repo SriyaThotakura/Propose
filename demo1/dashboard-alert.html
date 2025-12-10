@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IEMRS: Forensic Dashboard</title>
+    <link rel="stylesheet" href="demo2-style.css">
+    <style>
+        body {
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, #1a1a24 0%, #000 100%);
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+            max-width: 600px;
+        }
+        .cron-log {
+            width: 100%;
+            height: 100px;
+            background: #000;
+            border: 1px solid #333;
+            padding: 10px;
+            font-size: 0.8rem;
+            color: #666;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        .log-entry { margin: 2px 0; }
+        .log-success { color: var(--neon-blue); }
+        .log-warn { color: var(--glowing-gold); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>INTEGRATED ENVIRONMENTAL MONITORING (IEMRS)</h1>
+        
+        <div class="cron-log" id="cron-log">
+            <div class="log-entry">> System initialized...</div>
+            <div class="log-entry">> Connecting to Sensors [ID: BX-702]... OK</div>
+            <div class="log-entry">> Threshold set: 35 µg/m³</div>
+        </div>
+
+        <div class="metric-box">
+            <h2>CURRENT PM2.5 READING</h2>
+            <div class="value-display" id="pm25-value">22 µg/m³</div>
+            <div style="color: #666;">Safety Threshold: 35 µg/m³</div>
+        </div>
+
+        <div class="status-banner" id="status-banner">
+            STATUS: MONITORING (SAFE)
+        </div>
+
+        <div class="controls" style="position: relative; margin-top: 30px; left: auto; bottom: auto;">
+            <button class="btn-alert" onclick="runCronJob()">RUN HOURLY CRON CHECK</button>
+        </div>
+    </div>
+
+    <script>
+        function runCronJob() {
+            const log = document.getElementById('cron-log');
+            const valDisplay = document.getElementById('pm25-value');
+            const statusBanner = document.getElementById('status-banner');
+            
+            // 1. Add log entry simulating the check
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `<div class="log-entry">> [${time}] CRON EXECUTED: Fetching Sensor Data...</div>`;
+            log.scrollTop = log.scrollHeight;
+
+            // 2. Simulate Delay for dramatic effect (0.5s)
+            setTimeout(() => {
+                // 3. THE FORENSIC PROOF TRIGGER
+                // Update Value to exceed threshold
+                valDisplay.textContent = "45 µg/m³";
+                valDisplay.classList.add('gold-alert'); // Flash Gold
+                
+                // Update Log
+                log.innerHTML += `<div class="log-entry log-warn">> [${time}] ALERT: Threshold Exceeded (45 > 35)</div>`;
+                log.innerHTML += `<div class="log-entry log-warn">> [${time}] EVENT LOGGED: Forensic_ID_9921</div>`;
+                log.scrollTop = log.scrollHeight;
+
+                // Update Status Banner
+                statusBanner.innerHTML = "<h2>**!!! FORENSIC ALERT GENERATED !!!**</h2>";
+                statusBanner.className = "status-banner alert-box-active";
+                
+                // Optional: Play a subtle sound or just let the visual do the work
+                console.log("Forensic Proof Generated.");
+            }, 600);
+        }
+    </script>
+</body>
+</html>

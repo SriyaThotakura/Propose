@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Integrated System: Macro to Micro</title>
+    
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="demo2-style.css">
+    
+    <style>
+        /* Integration Overrides */
+        body { margin: 0; padding: 0; overflow: hidden; background: #000; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; z-index: 1; }
+        
+        /* Mapbox Popup Styling Override */
+        .mapboxgl-popup { z-index: 2000; max-width: 300px; }
+        .mapboxgl-popup-content {
+            background: rgba(10, 10, 16, 0.95);
+            border: 1px solid var(--glowing-gold);
+            color: var(--neon-green);
+            font-family: var(--monospace-font);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            border-radius: 4px;
+            padding: 10px;
+        }
+        .mapboxgl-popup-tip { border-top-color: var(--glowing-gold) !important; }
+        .mapboxgl-popup-close-button { color: var(--neon-green); }
+
+        /* Dashboard Overlay */
+        #forensic-dashboard {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(10, 10, 16, 0.9);
+            border: 1px solid var(--neon-blue);
+            z-index: 1000;
+            padding: 20px;
+            border-radius: 5px;
+            transform: translateX(450px);
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            backdrop-filter: blur(10px);
+        }
+        #forensic-dashboard.active { transform: translateX(0); }
+
+        /* ABM Controls */
+        #abm-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            z-index: 1000;
+            display: none; 
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Legend */
+        #legend {
+            bottom: 100px;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div id="overlay">
+        <h1>INTEGRATED SYSTEM VIEW</h1>
+        <div id="timeline"><div class="timeline-progress"></div><div class="timeline-marker"></div></div>
+        <div id="current-layer">MODE: MACRO (SATELLITE)</div>
+    </div>
+
+    <div id="legend">
+        <h3>System Layers (3D)</h3>
+        <div class="legend-item"><span class="legend-color" style="background:#FF4500;"></span> Feral City (High Risk)</div>
+        <div class="legend-item"><span class="legend-color" style="background:#A9A9A9;"></span> Gray City (Target)</div>
+        <div class="legend-item"><span class="legend-color" style="background:#4169E1;"></span> Human City</div>
+        <div class="legend-item"><span class="legend-color" style="background:#00FF7F;"></span> Green City</div>
+        <div class="legend-item"><span class="legend-color" style="border:2px solid #FFD700; background:none;"></span> Gold Iso-Surface</div>
+    </div>
+
+    <div id="forensic-dashboard">
+        <h2 style="color:var(--neon-blue); font-size:1rem; border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px;">
+            <i class="fas fa-satellite-dish"></i> IEMRS LIVE LINK
+        </h2>
+        <div class="metric-box" style="width:100%; margin:0; padding:15px; border-color:#333;">
+            <div style="font-size:0.8rem; color:#888;">REAL-TIME PM2.5</div>
+            <div class="value-display" id="pm25-value" style="font-size:2.5rem; margin:10px 0;">22</div>
+            <div style="color: #666; font-size:0.7rem;">THRESHOLD: 35 µg/m³</div>
+        </div>
+        <div class="status-banner" id="status-banner" style="font-size:0.8rem; min-height:40px; margin-top:15px;">
+            STATUS: MONITORING...
+        </div>
+        <button class="btn-alert" onclick="runCronJob()" style="width:100%; margin-top:15px; font-size:0.8rem;">
+            RUN FORENSIC CHECK
+        </button>
+    </div>
+
+    <div id="abm-controls">
+        <button class="btn-intervention" onclick="toggleIntervention()">
+            <i class="fas fa-shield-alt"></i> ACTIVATE SPATIAL BUFFER
+        </button>
+    </div>
+
+    <div id="controls">
+        <button id="play-pause" title="Play Macro Animation"><i class="fas fa-play"></i></button>
+        <button id="restart" title="Reset View"><i class="fas fa-redo"></i></button>
+        <button id="dive-btn" title="Dive to Micro Scale" style="border-color:var(--glowing-gold); color:var(--glowing-gold);">
+            <i class="fas fa-level-down-alt"></i>
+        </button>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        // REPLACE WITH YOUR TOKEN
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic3JpeWF0aG90YWt1cmEiLCJhIjoiY21kYzhuMG1hMTVrbjJpcHpnZ3Awdjc1dCJ9.bEGwdPmOH5kVaT9RWduC5Q'; 
+
+        // --- 2. GLOBAL STATE ---
+        let map;
+        let isMicroMode = false;
+        let interventionActive = false;
+        let isPlaying = false;
+        let startTime = 0;
+        let animationFrame;
+        const duration = 3000; // 60s Macro Phase
+        let agents = [];
+
+        // UI Elements
+        const timelineProgress = document.querySelector('.timeline-progress');
+        const timelineMarker = document.querySelector('.timeline-marker');
+        const layerDisplay = document.getElementById('current-layer');
+
+        // --- 3. INITIALIZE MAP ---
+        map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/dark-v11',
+            center: [-73.89, 40.84], // Bronx Macro View
+            zoom: 11.5,
+            pitch: 0,
+            bearing: 0,
+            antialias: true
+        });
+
+        // Helper for Colors
+        const getColor = (type) => {
+            if(type === 'Feral City') return '#FF4500';
+            if(type === 'Gray City') return '#A9A9A9';
+            if(type === 'Green City') return '#00FF7F';
+            if(type === 'Human City') return '#4169E1';
+            return '#333';
+        };
+
+        map.on('load', () => {
+            // A. SOURCES
+            map.addSource('city_type', { type: 'geojson', data: 'data/City_Type.geojson' });
+            map.addSource('trivariate', { type: 'geojson', data: 'data/Secondary_Intervention_Residential_TRIVARIATE.geojson' });
+
+            // B. LAYER 1: 3D EXTRUSIONS
+            map.addLayer({
+                'id': 'city-3d',
+                'type': 'fill-extrusion',
+                'source': 'city_type',
+                'paint': {
+                    'fill-extrusion-color': [
+                        'match', ['get', 'City_Type'],
+                        'Feral City', '#FF4500',
+                        'Gray City', '#A9A9A9',
+                        'Green City', '#00FF7F',
+                        'Human City', '#4169E1',
+                        '#333'
+                    ],
+                    'fill-extrusion-height': [
+                        'match', ['get', 'City_Type'],
+                        'Feral City', 250, 'Gray City', 50, 'Human City', 80, 'Green City', 10, 0
+                    ],
+                    'fill-extrusion-opacity': 0.7
+                }
+            });
+
+            // C. LAYER 2: PINK FOG (Fixed: Only Gray City)
+            map.addLayer({
+                'id': 'kde-fog',
+                'type': 'fill',
+                'source': 'city_type',
+                'filter': ['==', 'City_Type', 'Gray City'], // STRICT FILTER
+                'paint': {
+                    'fill-color': '#FF6B9D',
+                    'fill-opacity': 0, // Hidden initially
+                    'fill-outline-color': 'transparent'
+                }
+            });
+
+            // D. LAYER 3: GOLD LINE
+            map.addLayer({
+                'id': 'gold-line',
+                'type': 'line',
+                'source': 'trivariate',
+                'paint': {
+                    'line-color': '#FFD700',
+                    'line-width': 0,
+                    'line-opacity': 1,
+                    'line-blur': 2
+                }
+            });
+
+            // E. MICRO LAYERS (Agents & Buffer)
+            map.addSource('agents', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+            map.addLayer({
+                id: 'agent-layer',
+                type: 'circle',
+                source: 'agents',
+                paint: {
+                    'circle-radius': 4,
+                    'circle-color': ['get', 'color'],
+                    'circle-opacity': 0.9
+                }
+            });
+            
+            map.addSource('buffer-zone', {
+                type: 'geojson',
+                data: {
+                    type: 'Feature', geometry: {
+                        type: 'Polygon',
+                        coordinates: [[ [-73.912, 40.824], [-73.908, 40.824], [-73.908, 40.826], [-73.912, 40.826], [-73.912, 40.824] ]]
+                    }
+                }
+            });
+            map.addLayer({
+                id: 'buffer-fill',
+                type: 'fill',
+                source: 'buffer-zone',
+                paint: { 'fill-color': '#B026FF', 'fill-opacity': 0 }
+            });
+
+            // --- INTERACTIONS: POPUPS ---
+
+            // 1. Gold Line Popup
+            map.on('click', 'gold-line', (e) => {
+                if (map.getPaintProperty('gold-line', 'line-width') < 1) return;
+                const p = e.features[0].properties;
+                const V = p.CVI_mean || 0;
+                const P = p.Canopy_Pct_majority || 0;
+                const R = p.Asthma_I_R_mean_mean_majority || 0;
+                
+                new mapboxgl.Popup()
+                    .setLngLat(e.lngLat)
+                    .setHTML(`
+                        <div style="min-width:200px;">
+                            <strong style="color:#FFD700;">ISO-SURFACE BOUNDARY</strong><br>
+                            Vuln (CVI): ${V.toFixed(2)}<br>
+                            Policy (Canopy): ${P.toFixed(1)}%<br>
+                            Risk (Asthma): ${R.toFixed(1)}
+                        </div>
+                    `)
+                    .addTo(map);
+            });
+
+            // 2. City Type Popup
+            map.on('click', 'city-3d', (e) => {
+                const p = e.features[0].properties;
+                const cityType = p.City_Type || "Unknown";
+                const typeColor = getColor(cityType);
+                const area = p.Shape_Area_sum ? Math.round(p.Shape_Area_sum).toLocaleString() : 'N/A';
+                
+                new mapboxgl.Popup()
+                    .setLngLat(e.lngLat)
+                    .setHTML(`
+                        <div style="min-width:200px;">
+                            <strong style="color:${typeColor}; border-bottom:1px solid ${typeColor}; display:block; margin-bottom:5px;">
+                                ${cityType.toUpperCase()}
+                            </strong>
+                            <div style="font-size: 0.9em; color:#ddd;">
+                                Total Area: <span style="color:#fff;">${area}</span>
+                            </div>
+                        </div>
+                    `)
+                    .addTo(map);
+            });
+
+            // Change cursor on hover
+            map.on('mouseenter', 'city-3d', () => map.getCanvas().style.cursor = 'pointer');
+            map.on('mouseleave', 'city-3d', () => map.getCanvas().style.cursor = '');
+            map.on('mouseenter', 'gold-line', () => map.getCanvas().style.cursor = 'pointer');
+            map.on('mouseleave', 'gold-line', () => map.getCanvas().style.cursor = '');
+        });
+
+        // --- 4. MACRO ANIMATION LOOP ---
+        function animateMacroFrame() {
+            if (!isPlaying || isMicroMode) return;
+            const now = Date.now();
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            timelineProgress.style.width = (progress * 100) + '%';
+            timelineMarker.style.left = (progress * 100) + '%';
+
+            // Cinematic Pitch (0 to 60 degrees)
+            if (progress < 1) {
+                map.setPitch(progress * 60); 
+                map.setBearing(progress * 20);
+            }
+
+            // Layer 2: Pink Fog (30% - 60%)
+            if (progress > 0.3 && progress < 0.6) {
+                map.setPaintProperty('kde-fog', 'fill-opacity', 0.5); // Show Fog
+                layerDisplay.textContent = "LAYER 2: KDE SIMULATION (GRAY CITY)";
+            } else if (progress >= 0.6) {
+                map.setPaintProperty('kde-fog', 'fill-opacity', 0); // Hide Fog
+            }
+
+            // Layer 3: Gold Line (60%+)
+            if (progress > 0.6) {
+                map.setPaintProperty('gold-line', 'line-width', 5);
+                layerDisplay.textContent = "LAYER 3: ISO-SURFACE PROOF";
+            } else {
+                map.setPaintProperty('gold-line', 'line-width', 0);
+            }
+
+            if (progress < 1) {
+                animationFrame = requestAnimationFrame(animateMacroFrame);
+            } else {
+                isPlaying = false;
+                document.getElementById('play-pause').innerHTML = '<i class="fas fa-redo"></i>';
+            }
+        }
+
+        // --- 5. TRANSITION (The Dive) ---
+        document.getElementById('dive-btn').onclick = () => {
+            if (isMicroMode) return;
+            isMicroMode = true;
+            isPlaying = false;
+
+            // Fly Camera
+            map.flyTo({
+                center: [-73.91, 40.825], 
+                zoom: 17.5, 
+                pitch: 60, 
+                bearing: 45, 
+                duration: 4000
+            });
+
+            layerDisplay.textContent = "TRANSITIONING TO MICRO SCALE...";
+            document.getElementById('legend').style.opacity = 0;
+
+            setTimeout(() => {
+                document.getElementById('forensic-dashboard').classList.add('active');
+                document.getElementById('abm-controls').style.display = 'flex';
+                layerDisplay.textContent = "MODE: MICRO (SIMULATION + SENSOR)";
+                initAgents();
+                animateAgents();
+            }, 3500);
+        };
+
+        // --- 6. AGENT LOGIC ---
+        function initAgents() {
+            const center = [-73.91, 40.825];
+            for (let i = 0; i < 150; i++) {
+                agents.push({
+                    id: i,
+                    lng: center[0] + (Math.random() - 0.5) * 0.005,
+                    lat: center[1] + (Math.random() - 0.5) * 0.003,
+                    vx: (Math.random() - 0.5) * 0.00002,
+                    vy: (Math.random() - 0.5) * 0.00002,
+                    color: '#00CCFF'
+                });
+            }
+        }
+
+        function animateAgents() {
+            if (!isMicroMode) return;
+            const features = agents.map(a => {
+                let speedFactor = 1;
+                // Intervention Zone Logic
+                const inZone = (a.lng > -73.912 && a.lng < -73.908 && a.lat > 40.824 && a.lat < 40.826);
+                
+                if (interventionActive && inZone) {
+                    speedFactor = 0.05; // Slow down
+                    a.color = '#B026FF'; 
+                } else {
+                    a.color = '#00CCFF'; 
+                }
+                a.lng += a.vx * speedFactor;
+                a.lat += a.vy * speedFactor;
+                
+                // Bounds Check
+                if (a.lng < -73.915 || a.lng > -73.905) a.vx *= -1;
+                if (a.lat < 40.822 || a.lat > 40.828) a.vy *= -1;
+
+                return {
+                    type: 'Feature',
+                    properties: { color: a.color },
+                    geometry: { type: 'Point', coordinates: [a.lng, a.lat] }
+                };
+            });
+            map.getSource('agents').setData({ type: 'FeatureCollection', features: features });
+            requestAnimationFrame(animateAgents);
+        }
+
+        function toggleIntervention() {
+            interventionActive = !interventionActive;
+            const btn = document.querySelector('.btn-intervention');
+            if (interventionActive) {
+                map.setPaintProperty('buffer-fill', 'fill-opacity', 0.2);
+                btn.innerHTML = 'BUFFER ACTIVE';
+                btn.style.color = '#B026FF';
+            } else {
+                map.setPaintProperty('buffer-fill', 'fill-opacity', 0);
+                btn.innerHTML = 'ACTIVATE BUFFER';
+                btn.style.color = '';
+            }
+        }
+
+        // --- 7. FORENSIC ALERT (SMART LOGIC) ---
+        function runCronJob() {
+            const valDisplay = document.getElementById('pm25-value');
+            const statusBanner = document.getElementById('status-banner');
+            statusBanner.innerText = "CONNECTING...";
+            
+            setTimeout(() => {
+                // NEW LOGIC: If buffer is active, we are SAFE. If not, we are at RISK.
+                if (interventionActive) {
+                    // Safe State
+                    valDisplay.innerText = "15";
+                    valDisplay.style.color = "var(--neon-blue)";
+                    statusBanner.innerHTML = "<strong>✅ STATUS: BUFFER EFFECTIVE</strong>";
+                    statusBanner.style.color = "var(--neon-blue)";
+                    statusBanner.style.border = "1px solid var(--neon-blue)";
+                    statusBanner.style.background = "rgba(0, 204, 255, 0.1)";
+                } else {
+                    // Alert State (Violation)
+                    valDisplay.innerText = "45";
+                    valDisplay.style.color = "gold";
+                    statusBanner.innerHTML = "<strong>⚠️ FORENSIC ALERT</strong>";
+                    statusBanner.style.color = "gold";
+                    statusBanner.style.border = "1px solid gold";
+                    statusBanner.style.background = "rgba(255, 215, 0, 0.1)";
+                }
+            }, 800);
+        }
+
+        // Play Button
+        document.getElementById('play-pause').onclick = () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                if (startTime === 0) startTime = Date.now();
+                animateMacroFrame();
+                document.getElementById('play-pause').innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                cancelAnimationFrame(animationFrame);
+                document.getElementById('play-pause').innerHTML = '<i class="fas fa-play"></i>';
+            }
+        };
+        
+        // Restart
+        document.getElementById('restart').onclick = () => window.location.reload();
+
+    </script>
+</body>
+</html>

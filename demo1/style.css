@@ -1,0 +1,259 @@
+/* Define the Monospace Tech-Noir color variables */
+:root {
+    --dark-bg: #0A0A10;
+    --darker-bg: #050508;
+    --neon-green: #00FF99;
+    --neon-pink: #FF6B9D; 
+    --glowing-gold: #FFD700;
+    --monospace-font: 'Consolas', 'Courier New', monospace;
+    --transition-speed: 0.3s;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: var(--dark-bg);
+    color: var(--neon-green);
+    font-family: var(--monospace-font);
+    line-height: 1.6;
+}
+
+#map {
+    height: 100vh;
+    width: 100vw;
+    z-index: 1;
+}
+
+/* --- KDE SIMULATION EFFECT (FIXED SELECTOR) --- */
+@keyframes kde-pulse {
+    0% { fill-opacity: 0.3; filter: drop-shadow(0 0 2px var(--neon-pink)); }
+    50% { fill-opacity: 0.6; filter: drop-shadow(0 0 15px var(--neon-pink)); }
+    100% { fill-opacity: 0.3; filter: drop-shadow(0 0 2px var(--neon-pink)); }
+}
+
+/* CORRECTED: Removed 'path' from the selector. The class is ON the path. */
+.kde-simulation-layer {
+    animation: kde-pulse 4s infinite ease-in-out;
+    filter: blur(1px); 
+    stroke: none; 
+    transition: all 0.5s ease;
+}
+
+/* --- GLOWING LINE EFFECT (FIXED SELECTOR) --- */
+/* CORRECTED: Removed 'path' from the selector. */
+.isosurface-glow-line { 
+    filter: drop-shadow(0 0 8px var(--glowing-gold));
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    transition: stroke-width 0.2s;
+}
+
+/* Interactive hover effect */
+.isosurface-glow-line:hover {
+    stroke-width: 12px;
+    cursor: pointer;
+}
+
+
+/* Loading Screen */
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--darker-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    transition: opacity 0.5s ease-out;
+}
+
+#loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(0, 255, 153, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--neon-green);
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Overlay */
+#overlay {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 25px;
+    background: rgba(10, 10, 16, 0.85);
+    border: 1px solid var(--neon-green);
+    border-radius: 4px;
+    z-index: 1000;
+    pointer-events: none;
+    text-shadow: 0 0 5px var(--neon-green);
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+    backdrop-filter: blur(5px);
+}
+
+#overlay h1 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+}
+
+/* Timeline */
+#timeline {
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 255, 153, 0.2);
+    margin: 15px 0;
+    position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.timeline-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
+    background: var(--neon-green);
+    transition: width 0.1s linear;
+}
+
+.timeline-marker {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: var(--neon-green);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--neon-green);
+}
+
+/* Legend */
+#legend {
+    position: absolute;
+    bottom: 30px;
+    right: 20px;
+    background: rgba(10, 10, 16, 0.85);
+    padding: 15px;
+    border: 1px solid var(--neon-green);
+    border-radius: 4px;
+    z-index: 1000;
+    color: var(--neon-green);
+    font-size: 0.9em;
+    backdrop-filter: blur(5px);
+    max-width: 200px;
+}
+
+#legend h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(0, 255, 153, 0.3);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 20px;
+    height: 15px;
+    margin-right: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+/* Controls */
+#controls {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+
+#controls button {
+    background: rgba(10, 10, 16, 0.85);
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-speed) ease;
+    backdrop-filter: blur(5px);
+}
+
+#controls button:hover {
+    background: var(--neon-green);
+    color: var(--dark-bg);
+    box-shadow: 0 0 15px var(--neon-green);
+}
+
+/* Leaflet Overrides */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: var(--darker-bg) !important;
+    color: var(--neon-green) !important;
+    border: 1px solid var(--glowing-gold);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5) !important;
+    font-family: var(--monospace-font);
+    border-radius: 2px;
+}
+
+.leaflet-control-attribution {
+    background: rgba(0, 0, 0, 0.5) !important;
+    color: #666 !important;
+    font-size: 11px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #overlay {
+        width: 95%;
+        padding: 10px 15px;
+    }
+    
+    #overlay h1 {
+        font-size: 1.2em;
+    }
+    
+    #legend {
+        max-width: 160px;
+        font-size: 0.8em;
+        padding: 10px;
+    }
+}

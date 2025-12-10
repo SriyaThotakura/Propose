@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABM Data Flow Architecture</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #0b0f14;
+            color: #e8f5f1;
+            min-height: 100vh;
+        }
+        svg {
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2.7em;
+            color: #e8f5f1;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: #8ce9d5;
+            margin-bottom: 35px;
+            font-style: italic;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            background: #0f1620;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+        }
+        .data-source {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .data-source:hover rect {
+            filter: brightness(1.05);
+        }
+        .data-source:hover {
+            transform: translateY(-2px);
+        }
+        .flow-path {
+            fill: none;
+            stroke-width: 3;
+        }
+        .glow {
+            filter: drop-shadow(0 0 8px rgba(0, 201, 167, 0.5));
+        }
+        .layer-box {
+            stroke-width: 3;
+            rx: 12;
+        }
+        .info-panel {
+            background: #0f1620;
+            border: 1px solid #11302b;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 30px;
+            color: #d8e7e3;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+        }
+        .info-panel h3 {
+            color: #8ce9d5;
+            margin-top: 0;
+            border-bottom: 2px solid #11302b;
+            padding-bottom: 10px;
+        }
+        .data-item {
+            margin: 12px 0;
+            padding: 14px;
+            background: #0b131b;
+            border-radius: 8px;
+            border-left: 3px solid #00c9a7;
+        }
+        .data-item strong {
+            color: #e8f5f1;
+            font-size: 1.05em;
+        }
+        .highlight {
+            color: #00c9a7;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Agent-Based Model: Data Flow Architecture</h1>
+        <p class="subtitle">From Historical Open Data → ABM Engine → 50% Reduction Finding</p>
+        
+        <svg id="main-diagram" width="1500" height="900"></svg>
+
+        <div class="info-panel">
+            <h3>Data Sources & Flow Explanation</h3>
+            
+            <div class="data-item">
+                <strong>Redlining Boundaries (HOLC Maps 1930s)</strong>
+                <p>GeoJSON files provide <span class="highlight">initial state of vulnerability</span> - the 87% overlap foundation. These digitized maps show how historical discrimination creates lasting spatial patterns of structural violence.</p>
+            </div>
+
+            <div class="data-item">
+                <strong>Infrastructural Decisions</strong>
+                <p>Historical records of major projects (Cross-Bronx Expressway, highway placements) provide <span class="highlight">spatial and social rupture data</span> that feed the Network and Proximity rules in the ABM.</p>
+            </div>
+
+            <div class="data-item">
+                <strong>Socio-Economic Data (Census/EPA)</strong>
+                <p>Decades of poverty rates, housing density, and environmental hazards from <span class="highlight">freely available Census and EPA APIs</span> drive agent behavior over the 70-year simulation period.</p>
+            </div>
+
+            <div class="data-item">
+                <strong>The ABM Engine (Layer 3)</strong>
+                <p>Takes historical data as input and simulates agent movement using <span class="highlight">Three Social Rules: Proximity, Network, Historical Vulnerability</span>. Runs 70 years of structural violence patterns to generate the predictive map.</p>
+            </div>
+
+            <div class="data-item">
+                <strong>KDE Visualization (Layer 4)</strong>
+                <p>The Kernel Density Estimation transforms accumulated agent positions into the <span class="highlight">"toxic cloud"</span> heat map, making invisible structural violence visible.</p>
+            </div>
+
+            <div class="data-item">
+                <strong>Live Sensor (Future/Prototype)</strong>
+                <p>The Raspberry Pi + BME688/PMS5003 sensor provides <span class="highlight">real-time validation</span> of model predictions. This is separate from the ABM - it's the forensic proof component that turns predictions into evidence.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const svg = d3.select('#main-diagram');
+        const width = 1500;
+        const height = 900;
+
+        // Define arrow marker
+        svg.append('defs').append('marker')
+            .attr('id', 'arrowhead')
+            .attr('markerWidth', 12)
+            .attr('markerHeight', 12)
+            .attr('refX', 10)
+            .attr('refY', 4)
+            .attr('orient', 'auto')
+            .append('polygon')
+            .attr('points', '0 0, 12 4, 0 8')
+            .attr('fill', '#00c9a7');
+
+        svg.append('defs').append('marker')
+            .attr('id', 'arrowhead-gold')
+            .attr('markerWidth', 12)
+            .attr('markerHeight', 12)
+            .attr('refX', 10)
+            .attr('refY', 4)
+            .attr('orient', 'auto')
+            .append('polygon')
+            .attr('points', '0 0, 12 4, 0 8')
+            .attr('fill', '#8ce9d5');
+
+        // Data sources (left side)
+        const dataSources = [
+            {
+                x: 100, y: 150, width: 250, height: 100,
+                title: 'Redlining Boundaries',
+                subtitle: 'HOLC Maps (1930s)',
+                icon: '',
+                color: '#0b8f78',
+                detail: 'GeoJSON • Historical Vulnerability'
+            },
+            {
+                x: 100, y: 280, width: 250, height: 100,
+                title: 'Infrastructure Records',
+                subtitle: 'Policy Decisions',
+                icon: '',
+                color: '#0aa388',
+                detail: 'Highways • Urban Planning'
+            },
+            {
+                x: 100, y: 410, width: 250, height: 100,
+                title: 'Socio-Economic Data',
+                subtitle: 'Census & EPA APIs',
+                icon: '',
+                color: '#0ec9a9',
+                detail: 'Poverty • Density • Hazards'
+            }
+        ];
+
+        // ABM Engine (center)
+        const abmEngine = {
+            x: 500, y: 200, width: 400, height: 350,
+            title: 'Agent-Based Model',
+            subtitle: 'Layer 3: Core ABM Engine'
+        };
+
+        // Three Social Rules (inside ABM)
+        const socialRules = [
+            {x: 550, y: 300, label: '1. Proximity', icon: ''},
+            {x: 550, y: 380, label: '2. Network', icon: ''},
+            {x: 550, y: 460, label: '3. Historical\n   Vulnerability', icon: ''}
+        ];
+
+        // Output layers (right side)
+        const outputs = [
+            {
+                x: 1050, y: 150, width: 350, height: 120,
+                title: 'KDE Visualization',
+                subtitle: 'Layer 4: "Toxic Cloud"',
+                icon: '',
+                color: '#0b8f78'
+            },
+            {
+                x: 1050, y: 300, width: 350, height: 120,
+                title: '50% Reduction Finding',
+                subtitle: 'Predictive Output',
+                icon: '',
+                color: '#0aa388'
+            },
+            {
+                x: 1050, y: 450, width: 350, height: 120,
+                title: 'Live Sensor (Future)',
+                subtitle: 'Forensic Validation',
+                icon: '',
+                color: '#0ec9a9'
+            }
+        ];
+
+        // Draw data sources
+        dataSources.forEach((source, i) => {
+            const g = svg.append('g')
+                .attr('class', 'data-source');
+
+            g.append('rect')
+                .attr('x', source.x)
+                .attr('y', source.y)
+                .attr('width', source.width)
+                .attr('height', source.height)
+                .attr('rx', 10)
+                .attr('fill', source.color)
+                .attr('opacity', 0.8);
+
+            g.append('text')
+                .attr('x', source.x + 30)
+                .attr('y', source.y + 40)
+                .attr('font-size', '17px')
+                .attr('font-weight', 'bold')
+                .attr('fill', '#d8e7e3')
+                .text(source.title);
+
+            g.append('text')
+                .attr('x', source.x + 30)
+                .attr('y', source.y + 60)
+                .attr('font-size', '13px')
+                .attr('fill', '#d8e7e3')
+                .attr('opacity', 0.9)
+                .text(source.subtitle);
+
+            g.append('text')
+                .attr('x', source.x + 30)
+                .attr('y', source.y + 84)
+                .attr('text-anchor', 'start')
+                .attr('font-size', '12px')
+                .attr('fill', '#fff')
+                .attr('font-style', 'italic')
+                .text(source.detail);
+
+            // Flow lines to ABM
+            svg.append('path')
+                .attr('class', 'flow-path')
+                .attr('d', `M ${source.x + source.width} ${source.y + source.height/2} 
+                           Q ${source.x + source.width + 80} ${source.y + source.height/2}
+                             ${abmEngine.x} ${abmEngine.y + 80 + i * 80}`)
+                .attr('stroke', source.color)
+                .attr('marker-end', 'url(#arrowhead)');
+        });
+
+        // Draw ABM Engine
+        const abmG = svg.append('g');
+
+        abmG.append('rect')
+            .attr('class', 'layer-box')
+            .attr('x', abmEngine.x)
+            .attr('y', abmEngine.y)
+            .attr('width', abmEngine.width)
+            .attr('height', abmEngine.height)
+            .attr('fill', '#0b131b')
+            .attr('stroke', '#00c9a7')
+            .attr('opacity', 0.95);
+
+        abmG.append('text')
+            .attr('x', abmEngine.x + abmEngine.width/2)
+            .attr('y', abmEngine.y + 35)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '24px')
+            .attr('font-weight', 'bold')
+            .attr('fill', '#8ce9d5')
+            .text(abmEngine.title);
+
+        abmG.append('text')
+            .attr('x', abmEngine.x + abmEngine.width/2)
+            .attr('y', abmEngine.y + 60)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '15px')
+            .attr('fill', '#d8e7e3')
+            .text(abmEngine.subtitle);
+
+        // Three Social Rules
+        socialRules.forEach(rule => {
+            const rg = abmG.append('g');
+            
+            rg.append('circle')
+                .attr('cx', rule.x - 20)
+                .attr('cy', rule.y - 8)
+                .attr('r', 25)
+                .attr('fill', '#0f1b24')
+                .attr('stroke', '#00c9a7')
+                .attr('stroke-width', 2);
+
+            rule.label.split('\n').forEach((line, i) => {
+                rg.append('text')
+                    .attr('x', rule.x + 25)
+                    .attr('y', rule.y + i * 20)
+                    .attr('font-size', '15px')
+                    .attr('fill', '#d8e7e3')
+                    .text(line);
+            });
+        });
+
+        // Time indicator
+        abmG.append('text')
+            .attr('x', abmEngine.x + abmEngine.width/2)
+            .attr('y', abmEngine.y + 510)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '13px')
+            .attr('fill', '#8ca7a1')
+            .attr('font-style', 'italic')
+            .text('Computes spatial patterns from historical data');
+
+        // Draw outputs
+        outputs.forEach((output, i) => {
+            const g = svg.append('g');
+
+            g.append('rect')
+                .attr('x', output.x)
+                .attr('y', output.y)
+                .attr('width', output.width)
+                .attr('height', output.height)
+                .attr('rx', 10)
+                .attr('fill', output.color)
+                .attr('opacity', 0.85);
+
+            g.append('text')
+                .attr('x', output.x + 30)
+                .attr('y', output.y + 40)
+                .attr('font-size', '19px')
+                .attr('font-weight', 'bold')
+                .attr('fill', '#fff')
+                .text(output.title);
+
+            g.append('text')
+                .attr('x', output.x + 30)
+                .attr('y', output.y + 66)
+                .attr('font-size', '14px')
+                .attr('fill', '#c7d8d4')
+                .attr('opacity', 0.95)
+                .text(output.subtitle);
+
+            if (i === 1) {
+                g.append('text')
+                    .attr('x', output.x + 30)
+                    .attr('y', output.y + 94)
+                    .attr('font-size', '17px')
+                    .attr('font-weight', 'bold')
+                    .attr('fill', '#d8e7e3')
+                    .attr('class', 'glow')
+                    .text('Core Research Finding');
+            }
+
+            // Flow from ABM to outputs
+            svg.append('path')
+                .attr('class', 'flow-path')
+                .attr('d', `M ${abmEngine.x + abmEngine.width} ${abmEngine.y + abmEngine.height/2} 
+                           Q ${abmEngine.x + abmEngine.width + 60} ${abmEngine.y + abmEngine.height/2}
+                             ${output.x} ${output.y + output.height/2}`)
+                .attr('stroke', i === 1 ? '#00c9a7' : output.color)
+                .attr('stroke-width', 3)
+                .attr('marker-end', i === 1 ? 'url(#arrowhead-gold)' : 'url(#arrowhead)')
+                ;
+        });
+
+        // Title labels
+        svg.append('text')
+            .attr('x', 225)
+            .attr('y', 100)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '19px')
+            .attr('font-weight', 'bold')
+            .attr('fill', '#8ce9d5')
+            .text('DATA SOURCES');
+
+        svg.append('text')
+            .attr('x', 700)
+            .attr('y', 100)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '19px')
+            .attr('font-weight', 'bold')
+            .attr('fill', '#8ce9d5')
+            .text('ABM COMPUTATION');
+
+        svg.append('text')
+            .attr('x', 1225)
+            .attr('y', 100)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '19px')
+            .attr('font-weight', 'bold')
+            .attr('fill', '#8ce9d5')
+            .text('MODEL OUTPUTS');
+
+        // Bottom annotation
+        svg.append('text')
+            .attr('x', width/2)
+            .attr('y', 650)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '16px')
+            .attr('font-weight', 'bold')
+            .attr('fill', '#00c9a7')
+            .text('NO LIVE SENSORS REQUIRED FOR ABM');
+
+        svg.append('text')
+            .attr('x', width/2)
+            .attr('y', 675)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '14px')
+            .attr('fill', '#8ca7a1')
+            .text('The model runs entirely on historical open data • Sensors provide future validation only');
+
+        // Perma-computing badge
+        const badge = svg.append('g')
+            .attr('transform', 'translate(700, 730)');
+
+        badge.append('rect')
+            .attr('x', -100)
+            .attr('y', -20)
+            .attr('width', 200)
+            .attr('height', 40)
+            .attr('rx', 20)
+            .attr('fill', '#0b8f78')
+            .attr('opacity', 0.85);
+
+        badge.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('y', 5)
+            .attr('font-size', '15px')
+            .attr('font-weight', 'bold')
+            .attr('fill', '#fff')
+            .text('PERMA-COMPUTING');
+
+        // Data flow summary box
+        const summaryBox = svg.append('g')
+            .attr('transform', 'translate(50, 750)');
+
+        summaryBox.append('rect')
+            .attr('width', 1400)
+            .attr('height', 100)
+            .attr('rx', 10)
+            .attr('fill', '#0f1620')
+            .attr('opacity', 0.9);
+
+        summaryBox.append('text')
+            .attr('x', 20)
+            .attr('y', 30)
+            .attr('font-size', '15px')
+            .attr('font-weight', 'bold')
+            .attr('fill', '#e8f5f1')
+            .text('Data Flow Summary:');
+
+        const summary = [
+            '1. Historical GeoJSON (HOLC) + Infrastructure Records + Census/EPA APIs',
+            '2. ABM Engine processes 70 years using Three Social Rules (Proximity, Network, Vulnerability)',
+            '3. Output: KDE "Toxic Cloud" visualization + 50% Reduction finding + Future sensor validation'
+        ];
+
+        summary.forEach((text, i) => {
+            summaryBox.append('text')
+                .attr('x', 40)
+                .attr('y', 60 + i * 20)
+                .attr('font-size', '13px')
+                .attr('fill', '#8ca7a1')
+                .text(text);
+        });
+    </script>
+</body>
+</html>
